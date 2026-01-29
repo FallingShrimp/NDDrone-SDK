@@ -1,6 +1,6 @@
 import os
 
-from psychopy import core, event, visual
+from psychopy import visual
 
 
 class MonitorWindow(visual.Window):

@@ -1,6 +1,5 @@
 import os
 import time
-from inspect import iscode
 
 from psychopy import core, event
 
