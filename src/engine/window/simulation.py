@@ -56,7 +56,7 @@ class SimulationWindow(visual.Window):
                     False,
                 )
             )
-        self.pictures = result
+        self.flickerFrames = result
         return result
 
     def loadDynamicFrames(
@@ -68,9 +68,9 @@ class SimulationWindow(visual.Window):
         self.promptStim = self.coverImage(promptPath, False)
 
     def flicker(self):
-        for picture in self.pictures:
+        for flickerFrame in self.flickerFrames:
             self.backgroundStim.draw()
-            picture.draw()
+            flickerFrame.draw()
             self.flip()
         self.prompt()
 
