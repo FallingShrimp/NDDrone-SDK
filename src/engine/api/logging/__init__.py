@@ -29,7 +29,7 @@ class LogRecord(BaseModel):
     def print(self):
         color = MESSAGETYPE_COLOR_MAP[self.type]
         rich.print(
-            f"[cyan]{format(self.time)}<{self.moduleName}>[/cyan] [{color}]\\[{self.type.name}][/{color}] {self.message}"
+            f"[cyan]{format(self.time)}[magenta]<{self.moduleName}>[/magenta][/cyan] [{color}]\\[{self.type.name}][/{color}] {self.message}"
         )
 
 

@@ -4,6 +4,7 @@ import time
 
 from engine.api.behaviour.handler import store
 from engine.thread.SendMessageThread import SendMessageThread
+from engine.util.connection import isConnected
 from loggers import loggerBehaviour
 
 
@@ -27,19 +28,21 @@ class ReceiveMessageThread(threading.Thread):
 
     def run(self) -> None:
         while self.isRunning:
-            consumeMsg = self.neuroApiSocket.recv(1024)
-            if consumeMsg:
-                message = str(consumeMsg)[2:-1]
-                if len(message) > 5:
-                    result = int(message[5:])
-                    if result in store:
-                        action = store[result]()
-                        self.drone.send(str(action))
-                    else:
-                        loggerBehaviour.warning(
-                            f"Handler not registered for result {result}."
-                        )
-            time.sleep(0.1)
+            if isConnected(self.neuroApiSocket):
+                consumeMsg = self.neuroApiSocket.recv(1024)
+                if consumeMsg:
+                    message = str(consumeMsg)[2:-1]
+                    if len(message) > 5:
+                        result = int(message[5:])
+                        if result in store:
+                            action = store[result]()
+                            self.drone.send(str(action))
+                        else:
+                            loggerBehaviour.warning(
+                                f"Handler not registered for result {result}."
+                            )
+                time.sleep(0.1)
+        loggerBehaviour.warning("Disconnected.")
 
     def close(self):
         self.isRunning = False

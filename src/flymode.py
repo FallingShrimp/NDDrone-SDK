@@ -37,6 +37,7 @@ class NDDroneFlymode:
         self.monitor.close()  # 关掉窗口
         if isConnected(self.neuroApiSocket):
             self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
+            self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
         self.messageReceiver.close()

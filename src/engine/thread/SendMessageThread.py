@@ -34,6 +34,7 @@ class SendMessageThread(Thread):
             except Exception as e:
                 loggerDrone.error(e)
                 time.sleep(1)
+        loggerDrone.info("Disconnected.")
 
     def send(self, message: str):
         try:
@@ -45,4 +46,3 @@ class SendMessageThread(Thread):
     def close(self):
         self._is_running = False
         self._sock.close()
-        loggerDrone.info("Disconnected.")
