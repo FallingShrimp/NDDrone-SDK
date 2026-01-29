@@ -25,13 +25,16 @@ class ReceiveMessageThread(threading.Thread):
         self.drone = drone
         self.step = step
         self.isRunning = True
+        self.stop_event = threading.Event()
 
     def run(self) -> None:
-        while self.isRunning:
-            if checkConnection(self.neuroApiSocket):
-                consumeMsg = self.neuroApiSocket.recv(1024)
-                if consumeMsg:
-                    message = consumeMsg.decode("utf-8")
+        while not self.stop_event.is_set():
+            try:
+                if checkConnection(self.neuroApiSocket):
+                    data = self.neuroApiSocket.recv(1024)
+                    if not data:
+                        continue
+                    message = data.decode("utf-8")
                     if len(message) > 5:
                         result = int(message[5:])
                         if result in store:
@@ -41,8 +44,10 @@ class ReceiveMessageThread(threading.Thread):
                             loggerBehaviour.warning(
                                 f"Handler not registered for result {result}."
                             )
-                time.sleep(0.1)
+            except OSError:
+                self.stop_event.set()
+            time.sleep(0.01)
         loggerBehaviour.warning("Disconnected.")
 
     def close(self):
-        self.isRunning = False
+        self.stop_event.set()
