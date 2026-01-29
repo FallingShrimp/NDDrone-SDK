@@ -1,7 +1,7 @@
 from socket import AddressFamily, SocketKind, socket
 
 from engine.util.original import retry
-from loggers import loggerOthers
+from loggers import loggerNetwork
 
 
 def createServer(
@@ -18,7 +18,7 @@ def createServer(
 def waitClient(
     serverSocket: socket, maxRetryTimes: int
 ) -> tuple[socket, tuple[str, int]]:
-    loggerOthers.info(
+    loggerNetwork.info(
         f"Waiting for client connection on {serverSocket.getsockname()}..."
     )
 
@@ -33,7 +33,7 @@ def waitClient(
     if state:
         return result
     else:
-        loggerOthers.warning(
+        loggerNetwork.warning(
             f"Failed to accept client connection on {serverSocket.getsockname()}."
         )
         return emptyTcp(), emptyAddress()
@@ -48,7 +48,7 @@ def emptyAddress():
 
 
 def createClient(address: tuple[str, int], maxRetryTimes: int) -> socket:
-    loggerOthers.info(f"Connecting to {address}...")
+    loggerNetwork.info(f"Connecting to {address}...")
 
     @retry(maxRetryTimes)
     def tryConnect():
@@ -63,7 +63,7 @@ def createClient(address: tuple[str, int], maxRetryTimes: int) -> socket:
     if state:
         return result
     else:
-        loggerOthers.warning(f"Failed to connect to {address}.")
+        loggerNetwork.warning(f"Failed to connect to {address}.")
         return emptyTcp()
 
 
