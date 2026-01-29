@@ -15,7 +15,7 @@ class AnalyzerServer(threading.Thread):
         self.apiServer = NeuroApiServer()
 
     def init(self):
-        loggerNeuroApi.info("NeuroApi-server initializing...")
+        loggerNeuroApi.info("NeuroApi initializing...")
         self.apiServer.init()
 
     def run(self):

@@ -12,10 +12,21 @@ async function main() {
         .name(packageData.name)
         .version(packageData.version);
 
-    program.command("start")
+    const startCommand = program.command("start");
+    startCommand
+        .command("flymode")
         .action(() => {
             try {
                 childProcess.execSync("python src/index.py", { stdio: "inherit" });
+            } catch {
+                console.log("");
+            }
+        });
+    startCommand
+        .command("neuroapi")
+        .action(() => {
+            try {
+                childProcess.execSync("python src/analyzer/index.py", { stdio: "inherit" });
             } catch {
                 console.log("");
             }
