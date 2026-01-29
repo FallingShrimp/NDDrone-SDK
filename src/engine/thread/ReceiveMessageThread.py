@@ -40,7 +40,6 @@ class ReceiveMessageThread(threading.Thread):
                             f"Handler not registered for result {result}."
                         )
             time.sleep(0.1)
-            print("222")
 
     def close(self):
         self.isRunning = False
