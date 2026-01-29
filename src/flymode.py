@@ -2,12 +2,13 @@ import os
 import sys
 import time
 
-from psychopy import event
+from psychopy import core, event
 
 from engine.core.configCore import Config
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.connection import connectSocket, isConnected
+from engine.util.system import forceQuit
 from engine.util.workdir import fromAssets
 from engine.window.monitor import MonitorWindow
 from loggers import loggerMain
@@ -34,7 +35,14 @@ class NDDroneFlymode:
         self.monitor = MonitorWindow(self.config.windowSize)
 
     def quit(self):
-        sys.exit(0)
+        self.stoploop()
+        self.monitor.close()  # 关掉窗口
+        if isConnected(self.neuroApiSocket):
+            self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
+        self.drone.send("land")  # 降落无人机防止耗电
+        self.drone.close()
+        self.messageReceiver.close()
+        core.quit()
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
         self.running = False
