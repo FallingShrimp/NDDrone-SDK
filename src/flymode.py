@@ -45,7 +45,7 @@ class NDDroneFlymode:
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
         loggerMain.info("Quitted.")
-        loggerMain.info("Wating for NeuroAPI to stop...")
+        loggerMain.info("Waiting for NeuroAPI to stop...")
         core.quit()
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
