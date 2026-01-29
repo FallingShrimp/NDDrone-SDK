@@ -2,6 +2,8 @@ import os
 
 from psychopy import visual
 
+from engine.api.logging import loggerMain
+
 
 class MonitorWindow(visual.Window):
     frames: list[visual.ImageStim] = []
@@ -71,9 +73,10 @@ class MonitorWindow(visual.Window):
         self.backgroundStim = self.coverImage(backgroundPath, False)
         self.promptStim = self.coverImage(promptPath, False)
 
-    def flicker(self):
+    def doFlicker(self):
         for frame in self.frames:
             # 画背景图和当前帧，并且等待垂直同步渲染一帧
+            loggerMain.info(f"drawing {frame}")
             self.backgroundStim.draw()
             frame.draw()
             self.flip()

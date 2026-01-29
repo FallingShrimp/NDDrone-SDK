@@ -22,7 +22,7 @@ def main():
     promptPath = os.path.join(picturePath, "display_frame.png")
     # 飞控运行状态 & NeuroAI客户端
     stopFlag = False
-    neuroApiSocket = connectSocket(config.neuroApiAddress, 5)
+    neuroApiSocket = connectSocket(config.neuroApiAddress, 1)
 
     # region 无人机线程
     # 无人机发送指令
@@ -55,13 +55,13 @@ def main():
         currentTime = int(time.time() * 1000)
         neuroApiSocket.send(f"TIME:{currentTime}".encode("utf8"))
         # 开始闪烁
-        win.flicker()
+        win.doFlicker()
         while True:
             keys = event.getKeys()
             if "escape" in keys:
                 stopFlag = True
                 # 按了esc退出，先关窗口
-                win.close()
+                win.winHandle.minimize()
                 # 给无人机发降落，3秒后起桨降温
                 drone.send("land")
                 time.sleep(3)
