@@ -38,12 +38,12 @@ class NDDroneFlymode:
     def quit(self):
         self.stoploop()
         self.monitor.close()  # 关掉窗口
+        self.messageReceiveThread.close()  # 先把接收线程关了，不然后面发STOP会报错
         if checkConnection(self.neuroApiSocket):
             self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
-        self.messageReceiveThread.close()
         core.quit()
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
