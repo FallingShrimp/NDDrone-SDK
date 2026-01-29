@@ -47,7 +47,7 @@ class RoboMasterThread(Thread):
     def close(self):
         self._is_running = False
         self._sock.close()
-        loggerDrone.info("Drone disconnected.")
+        loggerDrone.info("Disconnected.")
 
     def requestDroneState(self):
         now = datetime.now()
