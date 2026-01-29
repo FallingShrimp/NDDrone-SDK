@@ -5,7 +5,7 @@ from scipy import signal
 from scipy.signal import resample
 
 from engine.core.wheelCore import Decoder
-from engine.util.connection import createClient
+from engine.util.connection import checkConnection, createClient
 from loggers import loggerNeuroApi
 
 
@@ -47,20 +47,21 @@ class NDThread(threading.Thread):
 
     def run(self):
         while self._is_running:
-            self.sock.send(bytearray(self.req_data_bytes))
-            header_bytes = self.sock.recv(7)
-            header = self.decoder.decode_bytes(header_bytes)
-            payload_length = header["payload_length"]
-            body = self.sock.recv(payload_length + 5)
-            res = self.decoder.decode_bytes(body)
-            try:
-                if res["timestamp"] == 0:
-                    continue
-            except Exception as e:
-                loggerNeuroApi.error(e)
-            self.eeg_datas.append(res)
-            if len(self.eeg_datas) > self.list_length:
-                self.eeg_datas.pop(0)
+            if checkConnection(self.sock):
+                self.sock.send(bytearray(self.req_data_bytes))
+                header_bytes = self.sock.recv(7)
+                header = self.decoder.decode_bytes(header_bytes)
+                payload_length = header["payload_length"]
+                body = self.sock.recv(payload_length + 5)
+                res = self.decoder.decode_bytes(body)
+                try:
+                    if res["timestamp"] == 0:
+                        continue
+                except Exception as e:
+                    loggerNeuroApi.error(e)
+                self.eeg_datas.append(res)
+                if len(self.eeg_datas) > self.list_length:
+                    self.eeg_datas.pop(0)
 
     def readFixedData(self, length, stimulationTime):
         self.downRatio = int(self.srate * length)

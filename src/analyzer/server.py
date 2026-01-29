@@ -20,17 +20,23 @@ class AnalyzerServer(threading.Thread):
     def run(self):
         self.apiServer.start()
         while self.apiServer.running:
-            if self.apiServer.messageQueue.qsize() > 0:
-                message = self.apiServer.messageQueue.get()
-                if len(message) > 5:
-                    stimulationTime = int(message[5:])
-                    epoch = self.apiServer.deviceThread.readFixedData(
-                        self.apiServer.config.winLEN + self.apiServer.config.lag,
-                        stimulationTime,
-                    )
-                    result = self.apiServer.analyzer.predict(epoch)[0]
-                    self.apiServer.clientSocket.send(f"RSLT:{result}".encode("utf-8"))
-                time.sleep(0.01)
+            try:
+                if self.apiServer.messageQueue.qsize() > 0:
+                    message = self.apiServer.messageQueue.get()
+                    if len(message) > 5:
+                        stimulationTime = int(message[5:])
+                        epoch = self.apiServer.deviceThread.readFixedData(
+                            self.apiServer.config.winLEN + self.apiServer.config.lag,
+                            stimulationTime,
+                        )
+                        result = self.apiServer.analyzer.predict(epoch)[0]
+                        self.apiServer.clientSocket.send(
+                            f"RSLT:{result}".encode("utf-8")
+                        )
+                    time.sleep(0.01)
+            except Exception as e:
+                loggerNeuroApi.error(e)
+                self.apiServer.running = False
 
     def quit(self):
         self.apiServer.quit()
@@ -63,15 +69,18 @@ class NeuroApiServer(threading.Thread):
 
     def run(self):
         self.deviceThread.start()
-        while True:
-            consumeMsg = self.clientSocket.recv(1024)
-            if consumeMsg:
-                message = str(consumeMsg)[2:-1]
-                self.messageQueue.put(message)
-                event = message[0:4]
-                if event == "STOP":
-                    break
-            time.sleep(0.1)
+        while self.running:
+            try:
+                consumeMsg = self.clientSocket.recv(1024)
+                if consumeMsg:
+                    message = str(consumeMsg)[2:-1]
+                    self.messageQueue.put(message)
+                    event = message[0:4]
+                    if event == "STOP":
+                        break
+                time.sleep(0.01)
+            except Exception as e:
+                loggerNeuroApi.error(e)
         self.running = False
 
     def quit(self):

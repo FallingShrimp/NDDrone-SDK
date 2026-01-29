@@ -18,3 +18,11 @@ def retry(
         return wrapper
 
     return decorator
+
+
+def waitKeyboardError() -> None:
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        pass
