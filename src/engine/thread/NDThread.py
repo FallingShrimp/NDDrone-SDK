@@ -4,9 +4,9 @@ import numpy as np
 from scipy import signal
 from scipy.signal import resample
 
-from engine.api.logging import loggerMain
 from engine.core.wheelCore import Decoder
 from engine.util.connection import connectSocket
+from loggers import loggerNeuroApi
 
 
 class NDThread(threading.Thread):
@@ -57,7 +57,7 @@ class NDThread(threading.Thread):
                 if res["timestamp"] == 0:
                     continue
             except Exception as e:
-                loggerMain.error(e)
+                loggerNeuroApi.error(e)
             self.eeg_datas.append(res)
             if len(self.eeg_datas) > self.list_length:
                 self.eeg_datas.pop(0)
@@ -89,7 +89,7 @@ class NDThread(threading.Thread):
                 (start_millis_second - eeg_packet_start_millis) * point_per_millis
             )
             if eeg_start_position < 0:
-                loggerMain.error("eeg time error:{0}".format(eeg_start_position))
+                loggerNeuroApi.error("eeg time error:{0}".format(eeg_start_position))
                 eeg_start_position = 0
             eeg_tmp = []
             eeg_data_length = 0
@@ -107,11 +107,11 @@ class NDThread(threading.Thread):
                 eeg_data = eeg_data[
                     :, eeg_start_position : (eeg_start_position + need_points)
                 ]
-                loggerMain.info(f"eeg start points: {eeg_start_position}")
-                loggerMain.info(f"need points: {need_points}")
-                loggerMain.info(f"start millis second: {start_millis_second}")
-                loggerMain.info(f"eeg packet millis: {eeg_packet_start_millis}")
-                loggerMain.info(f"eeg data shape: {eeg_data.shape}")
+                loggerNeuroApi.info(f"eeg start points: {eeg_start_position}")
+                loggerNeuroApi.info(f"need points: {need_points}")
+                loggerNeuroApi.info(f"start millis second: {start_millis_second}")
+                loggerNeuroApi.info(f"eeg packet millis: {eeg_packet_start_millis}")
+                loggerNeuroApi.info(f"eeg data shape: {eeg_data.shape}")
                 break
         return eeg_data
 

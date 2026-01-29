@@ -3,13 +3,13 @@ import time
 
 from psychopy import core, event
 
-from engine.api.logging import loggerMain
 from engine.core.configCore import Config
 from engine.thread.ReceiveMessageThread import ReceiveMessaageThread
 from engine.thread.RoboMasterThread import RoboMasterThread
 from engine.util.connection import connectSocket, isConnected
 from engine.util.workdir import fromAssets
 from engine.window.monitor import MonitorWindow
+from loggers import loggerMain
 
 
 def main():

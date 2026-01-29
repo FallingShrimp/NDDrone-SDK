@@ -3,7 +3,9 @@ import threading
 import time
 from typing import Callable
 
+from engine.api.behaviour.handler import store
 from engine.thread.RoboMasterThread import RoboMasterThread
+from loggers import loggerBehaviour
 
 
 class ReceiveMessaageThread(threading.Thread):
@@ -32,7 +34,14 @@ class ReceiveMessaageThread(threading.Thread):
             if consumeMsg:
                 message = str(consumeMsg)[2:-1]
                 if len(message) > 5:
-                    pass
+                    result = int(message[5:])
+                    if result in store:
+                        action = store[result]()
+                        self.drone.send(str(action))
+                    else:
+                        loggerBehaviour.warning(
+                            f"Handler not registered for result {result}."
+                        )
             time.sleep(0.1)
 
     def isRunning(self):
