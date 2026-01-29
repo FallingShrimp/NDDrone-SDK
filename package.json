@@ -2,6 +2,7 @@
     "name": "nddrone-sdk",
     "version": "1.0.0",
     "repository": "https://github.com/Rundll86/NDDrone-SDK.git",
+    "description": "基于脑机接口（BCI）的意念无人机控制系统。",
     "author": "陨落基围虾 <3161880837@qq.com>",
     "license": "MIT",
     "scripts": {
