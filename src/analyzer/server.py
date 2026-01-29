@@ -13,10 +13,6 @@ class AnalyzerServer(threading.Thread):
         super().__init__()
         self.apiServer = NeuroApiServer()
 
-    def init(self):
-        loggerNeuroApi.info("NeuroApi initializing...")
-        self.apiServer.init()
-
     def run(self):
         self.apiServer.start()
         while self.apiServer.running:
@@ -61,14 +57,12 @@ class NeuroApiServer(threading.Thread):
         )
         self.running = True
 
-    def init(self):
+    def run(self):
         self.analyzer.fit()
         loggerNeuroApi.info("Waiting for client connection...")
         self.clientSocket, _address = waitClient(self.clientServer, 5)
         self.clientSocket.settimeout(20000)
         self.deviceThread.connect()
-
-    def run(self):
         self.deviceThread.start()
         while self.running:
             try:
@@ -84,6 +78,7 @@ class NeuroApiServer(threading.Thread):
                         event = message[0:4]
                         if event == "STOP":
                             self.running = False
+                            self.quit()
                 time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)
@@ -93,3 +88,4 @@ class NeuroApiServer(threading.Thread):
         self.deviceThread.disconnect()
         self.clientServer.close()
         self.clientSocket.close()
+        loggerNeuroApi.info("Server stopped.")

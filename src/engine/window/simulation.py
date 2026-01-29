@@ -3,7 +3,7 @@ import os
 from psychopy import visual
 
 
-class MonitorWindow(visual.Window):
+class SimulationWindow(visual.Window):
     def __init__(
         self,
         size: tuple[int, int],
@@ -12,7 +12,7 @@ class MonitorWindow(visual.Window):
             size,
             monitor="testMonitor",
             units="pix",
-            fullscr=False,
+            fullscr=True,
             waitBlanking=False,
             color=(0, 0, 0),
             colorSpace="rgb255",

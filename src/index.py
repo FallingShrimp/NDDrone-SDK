@@ -2,7 +2,6 @@ from analyzer.server import NeuroApiServer
 from flymode import NDDroneFlymode
 
 neuroApi = NeuroApiServer()
-neuroApi.init()
 neuroApi.start()
 flymode = NDDroneFlymode()
 flymode.init()
