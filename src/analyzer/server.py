@@ -37,6 +37,7 @@ class AnalyzerServer(threading.Thread):
             except Exception as e:
                 loggerNeuroApi.error(e)
                 self.apiServer.running = False
+        self.quit()
 
     def quit(self):
         self.apiServer.quit()
@@ -73,12 +74,16 @@ class NeuroApiServer(threading.Thread):
             try:
                 consumeMsg = self.clientSocket.recv(1024)
                 if consumeMsg:
-                    message = consumeMsg.decode("utf8")
-                    loggerNeuroApi.info(f"Received message: {message}")
-                    self.messageQueue.put(message)
-                    event = message[0:4]
-                    if event == "STOP":
-                        break
+                    messages = consumeMsg.decode("utf8").split("\n")
+                    messages.remove("")
+                    for message in messages:
+                        loggerNeuroApi.info(
+                            f"[white]Received message: [bold]{message}[/bold][/white]"
+                        )
+                        self.messageQueue.put(message)
+                        event = message[0:4]
+                        if event == "STOP":
+                            self.running = False
                 time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)

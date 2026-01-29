@@ -40,7 +40,7 @@ class NDDroneFlymode:
         self.monitor.close()  # 关掉窗口
         self.messageReceiveThread.close()  # 先把接收线程关了，不然后面发STOP会报错
         if checkConnection(self.neuroApiSocket):
-            self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
+            self.neuroApiSocket.send(b"STOP\n")  # 关掉NeuroAPI
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
@@ -68,26 +68,21 @@ class NDDroneFlymode:
         # 第一帧，先把提示帧展示出来，等按空格开始
         self.monitor.prompt()
         while self.running:
-            event.waitKeys(keyList=["space"])
-            # 没连上就说明单纯调试刺激块屏幕，不管他即可
-            if checkConnection(self.neuroApiSocket):
-                # 给NeuroAI发消息准备开始接收识别结果
-                currentTime = int(time.time() * 1000)
-                self.neuroApiSocket.send(f"TIME:{currentTime}".encode("utf8"))
-            # 开始闪烁
-            self.monitor.flicker()
-            # 闪烁完了，等按空格继续
-            while True:
-                try:
-                    keys = event.getKeys()
-                    if "escape" in keys:
-                        self.stoploop()
-                        break
-                    elif "space" in keys:
-                        break
-                    # （软件计时器不精确，1帧可能不够休息）
-                    time.sleep(2 / 60)
-                except Exception as e:
-                    loggerMain.error(e)
+            try:
+                keys = event.getKeys(keyList=["space", "escape"])
+                if "escape" in keys:
                     self.stoploop()
                     break
+                elif "space" in keys:
+                    # 没连上就说明单纯调试刺激块屏幕，不管他即可
+                    if checkConnection(self.neuroApiSocket):
+                        # 给NeuroAI发消息准备开始接收识别结果
+                        currentTime = int(time.time() * 1000)
+                        self.neuroApiSocket.send(f"TIME:{currentTime}\n".encode("utf8"))
+                    # 开始闪烁
+                    self.monitor.flicker()
+                core.wait(0.01)
+            except Exception as e:
+                loggerMain.error(e)
+                self.stoploop()
+                break
