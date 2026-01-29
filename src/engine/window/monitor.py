@@ -1,15 +1,9 @@
 import os
 
-from psychopy import visual
-
-from engine.api.logging import loggerMain
+from psychopy import core, visual
 
 
 class MonitorWindow(visual.Window):
-    frames: list[visual.ImageStim] = []
-    backgroundStim: visual.ImageStim
-    promptStim: visual.ImageStim
-
     def __init__(
         self,
         size: tuple[int, int],
@@ -19,7 +13,7 @@ class MonitorWindow(visual.Window):
             monitor="testMonitor",
             units="pix",
             fullscr=False,
-            waitBlanking=True,
+            waitBlanking=False,
             color=(0, 0, 0),
             colorSpace="rgb255",
             screen=0,
@@ -75,12 +69,11 @@ class MonitorWindow(visual.Window):
 
     def doFlicker(self):
         for frame in self.frames:
-            # 画背景图和当前帧，并且等待垂直同步渲染一帧
-            loggerMain.info(f"drawing {frame}")
+            print("test", flush=True)
             self.backgroundStim.draw()
             frame.draw()
             self.flip()
-        # 闪烁完了，展示提示帧
+            core.wait(0.001)
         self.prompt()
 
     def prompt(self):
