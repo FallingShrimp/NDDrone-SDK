@@ -1,10 +1,11 @@
 import os
+import sys
 import time
 
-from psychopy import core, event
+from psychopy import event
 
 from engine.core.configCore import Config
-from engine.thread.ReceiveMessageThread import ReceiveMessaageThread
+from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.connection import connectSocket, isConnected
 from engine.util.workdir import fromAssets
@@ -28,21 +29,12 @@ class NDDroneFlymode:
         # 无人机发送指令
         self.drone = SendMessageThread(("192.168.10.1", 8889))
         # 无人机接收指令
-        self.messageReceiver = ReceiveMessaageThread(self.neuroApiSocket, self.drone, 5)
+        self.messageReceiver = ReceiveMessageThread(self.neuroApiSocket, self.drone, 5)
         # 初始化闪烁窗口
         self.monitor = MonitorWindow(self.config.windowSize)
 
     def quit(self):
-        self.stoploop()
-        self.monitor.close()  # 关掉窗口
-        self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
-        self.neuroApiSocket.close()
-        self.drone.send("land")  # 降落无人机防止耗电
-        self.drone.close()
-        self.drone.join()
-        self.messageReceiver.close()  # 关掉接收线程
-        self.messageReceiver.join()
-        core.quit()  # 退出
+        sys.exit(0)
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
         self.running = False
@@ -65,6 +57,7 @@ class NDDroneFlymode:
         self.monitor.prompt()
         while self.running:
             event.waitKeys(keyList=["space"])
+            # 没连上就说明单纯调试刺激块屏幕，不管他即可
             if isConnected(self.neuroApiSocket):
                 # 给NeuroAI发消息准备开始接收识别结果
                 currentTime = int(time.time() * 1000)

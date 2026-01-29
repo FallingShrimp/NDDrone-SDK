@@ -7,7 +7,7 @@ from engine.thread.SendMessageThread import SendMessageThread
 from loggers import loggerBehaviour
 
 
-class ReceiveMessaageThread(threading.Thread):
+class ReceiveMessageThread(threading.Thread):
     neuroApiSocket: socket.socket
     drone: SendMessageThread
     step: int
@@ -40,6 +40,7 @@ class ReceiveMessaageThread(threading.Thread):
                             f"Handler not registered for result {result}."
                         )
             time.sleep(0.1)
+            print("222")
 
     def close(self):
         self.isRunning = False

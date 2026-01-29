@@ -1,5 +1,4 @@
 import socket
-import threading
 import time
 from datetime import datetime
 from threading import Thread
@@ -20,7 +19,6 @@ class SendMessageThread(Thread):
         self._is_running = True
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.recb = lambda x: None
-        self.repeat(3)
 
     def run(self):
         while self._is_running:
@@ -48,15 +46,3 @@ class SendMessageThread(Thread):
         self._is_running = False
         self._sock.close()
         loggerDrone.info("Disconnected.")
-
-    def requestDroneState(self):
-        now = datetime.now()
-        if now.second % 2 == 0:
-            self.send("battery?")
-        else:
-            self.send("wifi?")
-
-    def repeat(self, interval):
-        if self._is_running:
-            self.requestDroneState()
-            threading.Timer(interval, self.repeat, [interval]).start()
