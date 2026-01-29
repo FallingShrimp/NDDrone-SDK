@@ -73,7 +73,8 @@ class NeuroApiServer(threading.Thread):
             try:
                 consumeMsg = self.clientSocket.recv(1024)
                 if consumeMsg:
-                    message = str(consumeMsg)[2:-1]
+                    message = consumeMsg.decode("utf8")
+                    loggerNeuroApi.info(f"Received message: {message}")
                     self.messageQueue.put(message)
                     event = message[0:4]
                     if event == "STOP":

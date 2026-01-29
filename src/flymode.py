@@ -60,6 +60,7 @@ class NDDroneFlymode:
         self.monitor.coverText("Loading...", True)
         self.monitor.loadFlickerFrames(self.picturePath)
         self.monitor.loadDynamicFrames(self.backgroundPath, self.promptPath)
+        loggerMain.info("Simulation ready!")
 
     def mainloop(self):
         self.running = True
