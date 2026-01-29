@@ -79,12 +79,6 @@ yarn build
 ./drone start
 ```
 
-### 编译为可执行文件
-
-```bash
-pyinstaller build.spec
-```
-
 ## 技术栈
 
 - **信号处理**: NumPy, SciPy, scikit-learn
