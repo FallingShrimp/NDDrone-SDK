@@ -13,7 +13,7 @@ class SimulationWindow(visual.Window):
             monitor="testMonitor",
             units="pix",
             fullscr=True,
-            waitBlanking=False,
+            waitBlanking=True,
             color=(0, 0, 0),
             colorSpace="rgb255",
             screen=0,
@@ -56,7 +56,7 @@ class SimulationWindow(visual.Window):
                     False,
                 )
             )
-        self.frames = result
+        self.pictures = result
         return result
 
     def loadDynamicFrames(
@@ -68,9 +68,9 @@ class SimulationWindow(visual.Window):
         self.promptStim = self.coverImage(promptPath, False)
 
     def flicker(self):
-        for frame in self.frames:
+        for picture in self.pictures:
             self.backgroundStim.draw()
-            frame.draw()
+            picture.draw()
             self.flip()
         self.prompt()
 

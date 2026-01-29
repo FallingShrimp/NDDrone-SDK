@@ -59,8 +59,12 @@ class NDDroneFlymode:
         self.drone.send("motoron")
         loggerMain.info("Loading frames...")
         self.simulation.coverText("Loading...", True)
-        self.simulation.loadFlickerFrames(self.picturePath)
-        self.simulation.loadDynamicFrames(self.backgroundPath, self.promptPath)
+        try:
+            self.simulation.loadFlickerFrames(self.picturePath)
+            self.simulation.loadDynamicFrames(self.backgroundPath, self.promptPath)
+        except Exception as e:
+            loggerMain.error(e)
+            self.quit()
         loggerMain.info("Simulation ready!")
 
     def mainloop(self):
