@@ -1,9 +1,9 @@
 from engine.api.logging import Logger
 
-loggerMain = Logger("main")
-loggerBehaviour = Logger("behaviour")
-loggerDrone = Logger("drone")
-loggerNeuroApi = Logger("neuroapi")
-loggerTaskQueue = Logger("taskqueue")
-loggerDevice = Logger("device")
-loggerOthers = Logger("other")
+loggerMain = Logger("FlymodeMain")
+loggerBehaviour = Logger("CommandBehaviour")
+loggerDrone = Logger("DronePeer")
+loggerNeuroApi = Logger("NeuroAPI")
+loggerTaskQueue = Logger("TaskQueue")
+loggerDevice = Logger("NDDevice")
+loggerOthers = Logger("Other")
