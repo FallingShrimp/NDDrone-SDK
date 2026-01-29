@@ -24,6 +24,7 @@ class NDDroneFlymode:
         self.running = False
         # NeuroAPI接收数据
         self.neuroApiSocket = connectSocket(self.config.neuroApiAddress, 1)
+        self.neuroApiSocket.settimeout(20000)
         # 无人机发送指令
         self.drone = RoboMasterThread(("192.168.10.1", 8889))
         # 无人机接收指令
@@ -41,8 +42,10 @@ class NDDroneFlymode:
         self.monitor.close()  # 关掉窗口
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
+        self.drone.join()
         self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
         self.neuroApiSocket.close()
+        self.messageReceiver.join()
         core.quit()  # 退出
         print(
             self.drone._is_running,

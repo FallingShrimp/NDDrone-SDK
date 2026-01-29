@@ -9,28 +9,27 @@ from loggers import loggerBehaviour
 
 
 class ReceiveMessaageThread(threading.Thread):
-    clientSocket: socket.socket
+    neuroApiSocket: socket.socket
     drone: RoboMasterThread
     step: int
     stopFlag: Callable[..., bool]
 
     def __init__(
         self,
-        clientSocket: socket.socket,
+        neuroApiSocket: socket.socket,
         drone: RoboMasterThread,
         step: int,
         stopFlag: Callable[..., bool],
     ) -> None:
         super().__init__()
-        self.clientSocket = clientSocket
+        self.neuroApiSocket = neuroApiSocket
         self.drone = drone
         self.step = step
         self.stopFlag = stopFlag
 
     def run(self) -> None:
-        self.clientSocket.settimeout(20000)
         while self.isRunning():
-            consumeMsg = self.clientSocket.recv(1024)
+            consumeMsg = self.neuroApiSocket.recv(1024)
             if consumeMsg:
                 message = str(consumeMsg)[2:-1]
                 if len(message) > 5:
