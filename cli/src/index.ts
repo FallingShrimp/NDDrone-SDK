@@ -26,7 +26,7 @@ async function main() {
         .command("neuroapi")
         .action(() => {
             try {
-                childProcess.execSync("python src/analyzer/index.py", { stdio: "inherit" });
+                childProcess.execSync("python src/neuroApi.py", { stdio: "inherit" });
             } catch {
                 console.log("");
             }
