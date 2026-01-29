@@ -4,6 +4,8 @@ from datetime import datetime
 from threading import Thread
 from typing import Callable
 
+from psychopy import core
+
 from loggers import loggerDrone
 
 
@@ -23,6 +25,8 @@ class SendMessageThread(Thread):
     def run(self):
         while self._is_running:
             try:
+                if not self._is_running:
+                    break
                 response, ip = self._sock.recvfrom(128)
                 response = response.decode(encoding="utf-8")
                 if response == "ok" or response == "error":
@@ -32,6 +36,8 @@ class SendMessageThread(Thread):
                 self.recb(response)
                 time.sleep(0.01)
             except Exception as e:
+                if not self._is_running:
+                    break
                 loggerDrone.error(e)
                 time.sleep(1)
         loggerDrone.warning("Disconnected.")
@@ -45,4 +51,8 @@ class SendMessageThread(Thread):
 
     def close(self):
         self._is_running = False
-        self._sock.close()
+        core.wait(0.1)
+        try:
+            self._sock.close()
+        except Exception:
+            pass
