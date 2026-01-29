@@ -1,7 +1,7 @@
 import threading
 import time
 
-from engine.thread.RoboMasterThread import RoboMasterThread
+from engine.thread.SendMessageThread import SendMessageThread
 from loggers import loggerTaskQueue
 
 
@@ -10,12 +10,12 @@ class TaskQueue(threading.Thread):
     currentState: bool = False
     currentAction: str = ""
     lastAction: str = ""
-    drone: RoboMasterThread
+    drone: SendMessageThread
     paused: bool = False
     msg: str
     pauseAfterActions: list[str]
 
-    def __init__(self, drone: RoboMasterThread) -> None:
+    def __init__(self, drone: SendMessageThread) -> None:
         super().__init__()
         drone.recb = self.setMsg
         self.msg = ""

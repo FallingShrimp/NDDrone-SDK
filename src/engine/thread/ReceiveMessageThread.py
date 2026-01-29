@@ -1,34 +1,32 @@
 import socket
 import threading
 import time
-from typing import Callable
 
 from engine.api.behaviour.handler import store
-from engine.thread.RoboMasterThread import RoboMasterThread
+from engine.thread.SendMessageThread import SendMessageThread
 from loggers import loggerBehaviour
 
 
 class ReceiveMessaageThread(threading.Thread):
     neuroApiSocket: socket.socket
-    drone: RoboMasterThread
+    drone: SendMessageThread
     step: int
-    stopFlag: Callable[..., bool]
+    isRunning: bool
 
     def __init__(
         self,
         neuroApiSocket: socket.socket,
-        drone: RoboMasterThread,
+        drone: SendMessageThread,
         step: int,
-        stopFlag: Callable[..., bool],
     ) -> None:
         super().__init__()
         self.neuroApiSocket = neuroApiSocket
         self.drone = drone
         self.step = step
-        self.stopFlag = stopFlag
+        self.isRunning = True
 
     def run(self) -> None:
-        while self.isRunning():
+        while self.isRunning:
             consumeMsg = self.neuroApiSocket.recv(1024)
             if consumeMsg:
                 message = str(consumeMsg)[2:-1]
@@ -43,5 +41,5 @@ class ReceiveMessaageThread(threading.Thread):
                         )
             time.sleep(0.1)
 
-    def isRunning(self):
-        return not self.stopFlag()
+    def close(self):
+        self.isRunning = False
