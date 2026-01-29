@@ -6,7 +6,7 @@ from psychopy import core, event
 from engine.core.configCore import Config
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
-from engine.util.connection import connectSocket, isConnected
+from engine.util.connection import checkConnection, createClient
 from engine.util.workdir import fromAssets
 from engine.window.monitor import MonitorWindow
 from loggers import loggerMain
@@ -23,7 +23,7 @@ class NDDroneFlymode:
         # 主循环状态
         self.running = False
         # NeuroAPI接收数据
-        self.neuroApiSocket = connectSocket(self.config.neuroApiAddress, 1)
+        self.neuroApiSocket = createClient(self.config.neuroApiAddress, 1)
         self.neuroApiSocket.settimeout(20000)
         # 无人机发送指令
         self.drone = SendMessageThread(("192.168.10.1", 8889))
@@ -35,7 +35,7 @@ class NDDroneFlymode:
     def quit(self):
         self.stoploop()
         self.monitor.close()  # 关掉窗口
-        if isConnected(self.neuroApiSocket):
+        if checkConnection(self.neuroApiSocket):
             self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
@@ -65,7 +65,7 @@ class NDDroneFlymode:
         while self.running:
             event.waitKeys(keyList=["space"])
             # 没连上就说明单纯调试刺激块屏幕，不管他即可
-            if isConnected(self.neuroApiSocket):
+            if checkConnection(self.neuroApiSocket):
                 # 给NeuroAI发消息准备开始接收识别结果
                 currentTime = int(time.time() * 1000)
                 self.neuroApiSocket.send(f"TIME:{currentTime}".encode("utf8"))

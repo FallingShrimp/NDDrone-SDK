@@ -4,7 +4,7 @@ import time
 
 from engine.api.behaviour.handler import store
 from engine.thread.SendMessageThread import SendMessageThread
-from engine.util.connection import isConnected
+from engine.util.connection import checkConnection
 from loggers import loggerBehaviour
 
 
@@ -28,7 +28,7 @@ class ReceiveMessageThread(threading.Thread):
 
     def run(self) -> None:
         while self.isRunning:
-            if isConnected(self.neuroApiSocket):
+            if checkConnection(self.neuroApiSocket):
                 consumeMsg = self.neuroApiSocket.recv(1024)
                 if consumeMsg:
                     message = str(consumeMsg)[2:-1]

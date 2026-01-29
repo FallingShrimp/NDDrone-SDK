@@ -1,33 +1,61 @@
 from socket import AddressFamily, SocketKind, socket
 
+from engine.util.original import retry
 from loggers import loggerOthers
 
 
-def connectSocket(
+def createServer(
     address: tuple[str, int],
-    retryTimes: int,
+    af: AddressFamily = AddressFamily.AF_INET,
+    type: SocketKind = SocketKind.SOCK_STREAM,
+) -> socket:
+    result = socket(af, type)
+    result.bind(address)
+    result.listen(1)
+    return result
+
+
+def waitClient(
+    serverSocket: socket, maxRetryTimes: int
+) -> tuple[socket, tuple[str, int]]:
+    loggerOthers.info(
+        f"Waiting for client connection on {serverSocket.getsockname()}..."
+    )
+
+    @retry(maxRetryTimes)
+    def tryAccept():
+        try:
+            clientSocket, clientAddr = serverSocket.accept()
+            return clientSocket, clientAddr
+        except Exception:
+            return False
+
+    return tryAccept()[0]
+
+
+def createClient(
+    address: tuple[str, int],
+    maxRetryTimes: int,
     af: AddressFamily = AddressFamily.AF_INET,
     type: SocketKind = SocketKind.SOCK_STREAM,
 ) -> socket:
     loggerOthers.info(f"Connecting to {address}...")
-    resultSocket = socket(af, type)
-    connected = False
-    reconnectedTimes = 0
-    while not connected:
+
+    @retry(maxRetryTimes)
+    def tryConnect():
         try:
+            resultSocket = socket(af, type)
             resultSocket.connect(address)
-            connected = True
+            return resultSocket
         except Exception:
-            reconnectedTimes += 1
-            if reconnectedTimes > retryTimes:
-                loggerOthers.warning(f"Cannot connect to {address}.")
-                break
-    return resultSocket
+            return False
+
+    return tryConnect()[0]
 
 
-def isConnected(socket: socket) -> bool:
+def checkConnection(clientSocket: socket) -> bool:
     try:
-        socket.getpeername()
+        clientSocket.getpeername()
         return True
     except Exception:
         return False

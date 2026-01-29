@@ -5,7 +5,7 @@ from scipy import signal
 from scipy.signal import resample
 
 from engine.core.wheelCore import Decoder
-from engine.util.connection import connectSocket
+from engine.util.connection import createClient
 from loggers import loggerNeuroApi
 
 
@@ -38,7 +38,7 @@ class NDThread(threading.Thread):
             raise ValueError("No butter received.")
 
     def connect(self):
-        self.sock = connectSocket(self.deviceAddress, 5)
+        self.sock = createClient(self.deviceAddress, 5)
 
     def disconnect(self):
         self._is_running = False
@@ -62,11 +62,11 @@ class NDThread(threading.Thread):
             if len(self.eeg_datas) > self.list_length:
                 self.eeg_datas.pop(0)
 
-    def readFixedData(self, length, stimulation_time):
+    def readFixedData(self, length, stimulationTime):
         self.downRatio = int(self.srate * length)
         data = None
         while data is None:
-            data = self.readEEGData(stimulation_time, length * 1000)
+            data = self.readEEGData(stimulationTime, length * 1000)
         data = self.preprocess(data)
         return data
 

@@ -23,7 +23,6 @@ class Config:
         winLEN=3,
         lag=0.14,
         frequency=np.arange(8, 17, 1),
-        distance=20,
     ):
         self.srate = srate
         self.record_srate = recordRate
