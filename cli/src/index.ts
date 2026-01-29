@@ -16,7 +16,9 @@ async function main() {
         .action(() => {
             try {
                 childProcess.execSync("python src/flymode.py", { stdio: "inherit" });
-            } catch { }
+            } catch {
+                console.log("");
+            }
         });
     program.command("generate")
         .action(async () => {
