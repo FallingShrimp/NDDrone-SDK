@@ -14,7 +14,7 @@ from loggers import loggerMain
 
 class NDDroneFlymode:
     def __init__(self):
-        loggerMain.info("NDDrone flymode loading...")
+        loggerMain.info("NDDrone-flymode initializing...")
         self.config = Config()
         # 配置一些路径常量
         self.picturePath = fromAssets("frames")
