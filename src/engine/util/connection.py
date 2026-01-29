@@ -25,40 +25,46 @@ def waitClient(
     @retry(maxRetryTimes)
     def tryAccept():
         try:
-            clientSocket, clientAddr = serverSocket.accept()
-            return clientSocket, clientAddr
+            return serverSocket.accept()
         except Exception:
             return False
 
     result, state = tryAccept()
-    if not state:
+    if state:
+        return result
+    else:
         loggerOthers.warning(
             f"Failed to accept client connection on {serverSocket.getsockname()}."
         )
-    return result
+        return emptyTcp(), emptyAddress()
 
 
-def createClient(
-    address: tuple[str, int],
-    maxRetryTimes: int,
-    af: AddressFamily = AddressFamily.AF_INET,
-    type: SocketKind = SocketKind.SOCK_STREAM,
-) -> socket:
+def emptyTcp():
+    return socket(AddressFamily.AF_INET, SocketKind.SOCK_STREAM)
+
+
+def emptyAddress():
+    return ("", 0)
+
+
+def createClient(address: tuple[str, int], maxRetryTimes: int) -> socket:
     loggerOthers.info(f"Connecting to {address}...")
 
     @retry(maxRetryTimes)
     def tryConnect():
         try:
-            resultSocket = socket(af, type)
+            resultSocket = emptyTcp()
             resultSocket.connect(address)
             return resultSocket
         except Exception:
             return False
 
     result, state = tryConnect()
-    if not state:
+    if state:
+        return result
+    else:
         loggerOthers.warning(f"Failed to connect to {address}.")
-    return result
+        return emptyTcp()
 
 
 def checkConnection(clientSocket: socket) -> bool:
