@@ -15,7 +15,7 @@ async function main() {
     program.command("start")
         .action(() => {
             try {
-                childProcess.execSync("python src/flymode.py", { stdio: "inherit" });
+                childProcess.execSync("python src/index.py", { stdio: "inherit" });
             } catch {
                 console.log("");
             }

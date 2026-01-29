@@ -22,6 +22,8 @@ class NDDroneFlymode:
         self.promptPath = os.path.join(self.picturePath, "display_frame.png")
         # 主循环状态
         self.running = False
+        # NeuroAPI接收数据
+        self.neuroApiSocket = connectSocket(self.config.neuroApiAddress, 1)
         # 无人机发送指令
         self.drone = RoboMasterThread(("192.168.10.1", 8889))
         # 无人机接收指令
@@ -49,8 +51,6 @@ class NDDroneFlymode:
         self.running = False
 
     def init(self):
-        loggerMain.info("Conneting to NeuroAPI...")
-        self.neuroApiSocket = connectSocket(self.config.neuroApiAddress, 1)
         loggerMain.info("Starting drone...")
         self.drone.start()
         self.drone.send("command")

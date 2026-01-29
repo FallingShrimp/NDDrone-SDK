@@ -9,6 +9,7 @@ def connectSocket(
     af: AddressFamily = AddressFamily.AF_INET,
     type: SocketKind = SocketKind.SOCK_STREAM,
 ) -> socket:
+    loggerOthers.info(f"Connecting to {address}...")
     resultSocket = socket(af, type)
     connected = False
     reconnectedTimes = 0
