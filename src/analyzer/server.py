@@ -59,7 +59,6 @@ class NeuroApiServer(threading.Thread):
 
     def run(self):
         self.analyzer.fit()
-        loggerNeuroApi.info("Waiting for client connection...")
         self.clientSocket, _address = waitClient(self.clientServer, 5)
         self.clientSocket.settimeout(20000)
         self.deviceThread.connect()
