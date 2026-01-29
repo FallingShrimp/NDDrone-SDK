@@ -2,8 +2,7 @@ import queue
 import threading
 import time
 
-from spatialFilter import FBCCA
-
+from analyzer.spatialFilter import FBCCA
 from engine.core.configCore import Config
 from engine.thread.NDThread import NDThread, loggerNeuroApi
 from engine.util.connection import createServer, waitClient
