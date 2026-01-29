@@ -22,3 +22,11 @@ def connectSocket(
                 loggerMain.warning(f"Cannot connect to {address}.")
                 break
     return resultSocket
+
+
+def isConnected(socket: socket) -> bool:
+    try:
+        socket.getpeername()
+        return True
+    except Exception:
+        return False

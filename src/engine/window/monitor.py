@@ -1,6 +1,6 @@
 import os
 
-from psychopy import core, visual
+from psychopy import core, event, visual
 
 
 class MonitorWindow(visual.Window):
@@ -69,11 +69,9 @@ class MonitorWindow(visual.Window):
 
     def doFlicker(self):
         for frame in self.frames:
-            print("test", flush=True)
             self.backgroundStim.draw()
             frame.draw()
             self.flip()
-            core.wait(0.001)
         self.prompt()
 
     def prompt(self):
