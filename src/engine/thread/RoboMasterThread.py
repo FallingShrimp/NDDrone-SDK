@@ -57,5 +57,6 @@ class RoboMasterThread(Thread):
             self.send("wifi?")
 
     def repeat(self, interval):
-        self.requestDroneState()
-        threading.Timer(interval, self.repeat, [interval]).start()
+        if self._is_running:
+            self.requestDroneState()
+            threading.Timer(interval, self.repeat, [interval]).start()

@@ -85,6 +85,7 @@ class NDDroneFlymode:
                         break
                     # （软件计时器不精确，1帧可能不够休息）
                     time.sleep(2 / 60)
-                except KeyboardInterrupt:
+                except Exception as e:
+                    loggerMain.error(e)
                     self.stoploop()
                     break
