@@ -5,7 +5,7 @@ import time
 from spatialFilter import FBCCA
 
 from engine.core.configCore import Config
-from engine.thread.NDThread import NDThread
+from engine.thread.NDThread import NDThread, loggerNeuroApi
 from engine.util.connection import createServer, waitClient
 
 
@@ -15,6 +15,7 @@ class AnalyzerServer(threading.Thread):
         self.apiServer = NeuroApiServer()
 
     def init(self):
+        loggerNeuroApi.info("NeuroApi-server initializing...")
         self.apiServer.init()
 
     def run(self):
@@ -56,9 +57,10 @@ class NeuroApiServer(threading.Thread):
 
     def init(self):
         self.analyzer.fit()
+        loggerNeuroApi.info("Waiting for client connection...")
         self.clientSocket, _address = waitClient(self.clientServer, 5)
-        self.deviceThread.connect()
         self.clientSocket.settimeout(20000)
+        self.deviceThread.connect()
 
     def run(self):
         self.deviceThread.start()

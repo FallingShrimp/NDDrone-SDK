@@ -14,7 +14,6 @@ from loggers import loggerMain
 
 class NDDroneFlymode:
     def __init__(self):
-        loggerMain.info("NDDrone-flymode initializing...")
         self.config = Config()
         # 配置一些路径常量
         self.picturePath = fromAssets("frames")
@@ -28,7 +27,11 @@ class NDDroneFlymode:
         # 无人机发送指令
         self.drone = SendMessageThread(("192.168.10.1", 8889))
         # 无人机接收指令
-        self.messageReceiver = ReceiveMessageThread(self.neuroApiSocket, self.drone, 5)
+        self.messageReceiveThread = ReceiveMessageThread(
+            self.neuroApiSocket,
+            self.drone,
+            50,
+        )
         # 初始化闪烁窗口
         self.monitor = MonitorWindow(self.config.windowSize)
 
@@ -40,13 +43,14 @@ class NDDroneFlymode:
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
-        self.messageReceiver.close()
+        self.messageReceiveThread.close()
         core.quit()
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
         self.running = False
 
     def init(self):
+        loggerMain.info("NDDrone-flymode initializing...")
         loggerMain.info("Starting drone...")
         self.drone.start()
         self.drone.send("command")
@@ -59,7 +63,7 @@ class NDDroneFlymode:
 
     def mainloop(self):
         self.running = True
-        self.messageReceiver.start()
+        self.messageReceiveThread.start()
         # 第一帧，先把提示帧展示出来，等按空格开始
         self.monitor.prompt()
         while self.running:

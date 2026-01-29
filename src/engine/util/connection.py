@@ -30,7 +30,12 @@ def waitClient(
         except Exception:
             return False
 
-    return tryAccept()[0]
+    result, state = tryAccept()
+    if not state:
+        loggerOthers.warning(
+            f"Failed to accept client connection on {serverSocket.getsockname()}."
+        )
+    return result
 
 
 def createClient(
@@ -50,7 +55,10 @@ def createClient(
         except Exception:
             return False
 
-    return tryConnect()[0]
+    result, state = tryConnect()
+    if not state:
+        loggerOthers.warning(f"Failed to connect to {address}.")
+    return result
 
 
 def checkConnection(clientSocket: socket) -> bool:

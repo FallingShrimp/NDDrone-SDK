@@ -4,7 +4,7 @@ import numpy as np
 from scipy import signal
 from scipy.signal import resample
 
-from engine.core.wheelCore import Decoder
+from engine.core.wheelCore import Decoder, loggerDevice
 from engine.util.connection import createClient
 from loggers import loggerNeuroApi
 
@@ -38,6 +38,7 @@ class NDThread(threading.Thread):
             raise ValueError("No butter received.")
 
     def connect(self):
+        loggerDevice.info("Connecting to ND8...")
         self.sock = createClient(self.deviceAddress, 5)
 
     def disconnect(self):
