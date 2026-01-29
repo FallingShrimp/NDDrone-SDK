@@ -67,7 +67,7 @@ class MonitorWindow(visual.Window):
         self.backgroundStim = self.coverImage(backgroundPath, False)
         self.promptStim = self.coverImage(promptPath, False)
 
-    def doFlicker(self):
+    def flicker(self):
         for frame in self.frames:
             self.backgroundStim.draw()
             frame.draw()

@@ -12,72 +12,79 @@ from engine.window.monitor import MonitorWindow
 from loggers import loggerMain
 
 
-def main():
-    loggerMain.info("NDDrone flymode loading...")
-    config = Config()
+class NDDroneFlymode:
+    def __init__(self):
+        loggerMain.info("NDDrone flymode loading...")
+        self.config = Config()
+        # 配置一些路径常量
+        self.picturePath = fromAssets("frames")
+        self.backgroundPath = fromAssets("background.jpg")
+        self.promptPath = os.path.join(self.picturePath, "display_frame.png")
+        # 主循环状态
+        self.running = False
+        # 无人机发送指令
+        self.drone = RoboMasterThread(("192.168.10.1", 8889))
+        # 无人机接收指令
+        self.messageReceiver = ReceiveMessaageThread(
+            self.neuroApiSocket,
+            self.drone,
+            50,
+            lambda: not self.running,
+        )
+        # 初始化闪烁窗口
+        self.monitor = MonitorWindow(self.config.windowSize)
 
-    # 配置一些路径常量
-    picturePath = fromAssets("frames")
-    backgroundPath = fromAssets("background.jpg")
-    promptPath = os.path.join(picturePath, "display_frame.png")
-    # 飞控运行状态 & NeuroAI客户端
-    stopFlag = False
-    neuroApiSocket = connectSocket(config.neuroApiAddress, 1)
+    def quit(self):
+        self.stoploop()
+        self.monitor.close()  # 关掉窗口
+        self.drone.send("land")  # 关掉无人机
+        time.sleep(3)
+        self.drone.send("motoron")
+        core.wait(1)
+        self.drone.close()
+        self.neuroApiSocket.send(b"STOP")  # 关掉NeuroAPI
+        core.quit()  # 退出
 
-    # region 无人机线程
-    # 无人机发送指令
-    drone = RoboMasterThread(("192.168.10.1", 8889))
-    drone.start()
-    drone.send("command")
-    time.sleep(1)
-    drone.send("motoron")
-    # 无人机接收指令
-    messageReceiver = ReceiveMessaageThread(
-        neuroApiSocket,
-        drone,
-        config.distance,
-        lambda: stopFlag,
-    )
-    messageReceiver.start()
+    def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
+        self.running = False
 
-    # region 初始化闪烁窗口
-    win = MonitorWindow(config.windowSize)
-    win.coverText("Loading...", True)
-    win.loadFlickerFrames(picturePath)
-    win.loadDynamicFrames(backgroundPath, promptPath)
+    def init(self):
+        loggerMain.info("Conneting to NeuroAPI...")
+        self.neuroApiSocket = connectSocket(self.config.neuroApiAddress, 1)
+        loggerMain.info("Starting drone...")
+        self.drone.start()
+        self.drone.send("command")
+        time.sleep(1)
+        self.drone.send("motoron")
+        self.messageReceiver.start()
+        loggerMain.info("Loading frames...")
+        self.monitor.coverText("Loading...", True)
+        self.monitor.loadFlickerFrames(self.picturePath)
+        self.monitor.loadDynamicFrames(self.backgroundPath, self.promptPath)
 
-    # 第一帧，先把提示帧展示出来，等按空格开始
-    win.prompt()
-    while not stopFlag:
-        event.waitKeys(keyList=["space"])
-        if isConnected(neuroApiSocket):
-            # 给NeuroAI发消息准备开始接收识别结果
-            currentTime = int(time.time() * 1000)
-            neuroApiSocket.send(f"TIME:{currentTime}".encode("utf8"))
-        # 开始闪烁
-        win.doFlicker()
-        while True:
-            keys = event.getKeys()
-            if "escape" in keys:
-                stopFlag = True
-                # 按了esc退出，先关窗口
-                win.close()
-                # 给无人机发降落，3秒后起桨降温
-                drone.send("land")
-                time.sleep(3)
-                drone.send("motoron")
-                break
-            elif "space" in keys:
-                break
-            # 不需要每0.1秒扫一次键盘，只需要大概每2帧一次就行，也能让cpu休息
-            # （软件计时器不精确，1帧可能不够休息）
-            time.sleep(2 / 60)
-
-    drone.close()
-    neuroApiSocket.send(b"STOP")
-    win.close()
-    core.quit()
-
-
-if __name__ == "__main__":
-    main()
+    def mainloop(self):
+        self.running = True
+        # 第一帧，先把提示帧展示出来，等按空格开始
+        self.monitor.prompt()
+        while self.running:
+            event.waitKeys(keyList=["space"])
+            if isConnected(self.neuroApiSocket):
+                # 给NeuroAI发消息准备开始接收识别结果
+                currentTime = int(time.time() * 1000)
+                self.neuroApiSocket.send(f"TIME:{currentTime}".encode("utf8"))
+            # 开始闪烁
+            self.monitor.flicker()
+            # 闪烁完了，等按空格继续
+            while True:
+                try:
+                    keys = event.getKeys()
+                    if "escape" in keys:
+                        self.stoploop()
+                        break
+                    elif "space" in keys:
+                        break
+                    # （软件计时器不精确，1帧可能不够休息）
+                    time.sleep(2 / 60)
+                except KeyboardInterrupt:
+                    self.stoploop()
+                    break

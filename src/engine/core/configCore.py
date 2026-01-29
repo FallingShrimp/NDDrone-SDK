@@ -30,9 +30,6 @@ class Config:
         self.winLEN = winLEN
         self.lag = lag
         self.frequency = frequency
-        self.distance = 0
-        if self.distance == 0:
-            self.distance = distance
 
     def connectINFO(
         self,
