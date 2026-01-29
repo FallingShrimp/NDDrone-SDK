@@ -1,7 +1,5 @@
 # NDDrone-SDK (原flymode)
 
-<div align="center">
-
 基于脑机接口（BCI）的意念无人机控制系统
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
@@ -12,8 +10,7 @@
 ## 核心功能
 
 - 🎯 **SSVEP视觉刺激系统**
-  - 180帧循环闪烁动画
-  - 支持8-16Hz多频率刺激
+  - 垂直同步定帧闪烁动画
   - 全屏显示（1920x1080@60Hz）
 
 - 🚁 **无人机智能控制**
@@ -57,12 +54,6 @@ pip install -r requirements.txt
 编辑 `config.ini` 文件，配置以下参数：
 
 ```ini
-[runtime]
-path=dist # 编译输出目录
-
-[build]
-debug=true # 是否开启调试模式
-
 [frames]
 count=180 # 闪烁帧总量
 ```
@@ -76,27 +67,32 @@ yarn install
 yarn build
 ```
 
-## 控制指令
+### 编译刺激块
 
-| 指令编号 | 频率(Hz) |
-|----------|----------|
-| 0        | 8        |
-| 1        | 9        |
-| 2        | 10       |
-| 3        | 11       |
-| 4        | 12       |
-| 5        | 13       |
-| 6        | 14       |
-| 7        | 15       |
-| 8        | 16       |
+```bash
+./drone generate
+```
+
+### 启动刺激窗口&飞控
+
+```bash
+./drone start
+```
+
+### 编译为可执行文件
+
+```bash
+pyinstaller build.spec
+```
 
 ## 技术栈
 
 - **信号处理**: NumPy, SciPy, scikit-learn
 - **视觉刺激**: PsychoPy
 - **无人机控制**: RoboMaster SDK
-- **网络通信**: Socket
-- **生成刺激块**：PIL
+- **网络通信**: Socket(UDP)
+- **生成刺激块帧图**：PIL
+- **编译**：PyInstaller
 
 ## 贡献指南
 
@@ -110,15 +106,13 @@ yarn build
 
 如有问题或建议，请通过以下方式联系：
 
-- 提交 [Issue](https://github.com/Rundll86/NDDrone-flymode/issues)
+- 提交 [Issue](https://github.com/Rundll86/NDDrone-SDK/issues)
 
 ## 致谢
 
 感谢所有为本项目做出贡献的开发者和研究人员。
 
 ---
-
-<div align="center">
 
 **用意念控制未来** 🧠✨
 

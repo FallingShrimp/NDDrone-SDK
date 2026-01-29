@@ -1,0 +1,31 @@
+a = Analysis(
+    ["src/index.py"],
+    pathex=["src"],
+    binaries=[],
+    datas=[("assets", "assets")],
+    hiddenimports=[],
+    hookspath=[],
+    runtime_hooks=[],
+    excludes=["tkinter", "matplotlib"],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    noarchive=False,
+)
+pyz = PYZ(a.pure, a.zipped_data)
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name="NDDrone",
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
