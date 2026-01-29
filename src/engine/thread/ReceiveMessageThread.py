@@ -31,7 +31,7 @@ class ReceiveMessageThread(threading.Thread):
             if checkConnection(self.neuroApiSocket):
                 consumeMsg = self.neuroApiSocket.recv(1024)
                 if consumeMsg:
-                    message = str(consumeMsg)[2:-1]
+                    message = consumeMsg.decode("utf-8")
                     if len(message) > 5:
                         result = int(message[5:])
                         if result in store:
