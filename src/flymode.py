@@ -1,6 +1,7 @@
 import os
 import time
 import warnings
+import state
 
 from psychopy import core, event, logging
 
@@ -48,8 +49,8 @@ class NDDroneFlymode:
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
         loggerMain.info("已退出。")
-        loggerMain.info("等待NeuroAPI关闭...")
-        core.quit()
+        state.flymode = False
+        state.prompt()
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
         self.running = False

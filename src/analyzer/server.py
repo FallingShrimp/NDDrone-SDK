@@ -1,6 +1,7 @@
 import queue
 import threading
 import time
+import state
 
 from analyzer.spatialFilter import FBCCA
 from engine.core.configCore import Config
@@ -37,6 +38,8 @@ class AnalyzerServer(threading.Thread):
 
     def quit(self):
         self.apiServer.quit()
+        state.neuroai = False
+        state.prompt()
 
 
 class NeuroApiServer(threading.Thread):
