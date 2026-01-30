@@ -3,6 +3,7 @@ import time
 import warnings
 import state
 import keyboard
+import pyglet.gl.lib
 
 from psychopy import core, event, logging
 
@@ -42,14 +43,17 @@ class NDDroneFlymode:
         keyboard.add_hotkey("m", self.toggleSimulation)
 
     def toggleSimulation(self):
-        if self.simulation.minimized:
-            self.simulation.winHandle.maximize()
-            self.simulation.winHandle.activate()
-            self.simulation.flip()
-            loggerMain.info("窗口已最大化")
-        else:
-            self.simulation.winHandle.minimize()
-            loggerMain.info("窗口已最小化")
+        try:
+            if self.simulation.minimized:
+                self.simulation.winHandle.maximize()
+                self.simulation.winHandle.activate()
+                loggerMain.info("窗口已最大化")
+            else:
+                self.simulation.winHandle.minimize()
+                loggerMain.info("窗口已最小化")
+        except pyglet.gl.lib.GLException:
+            self.simulation.minimized = not self.simulation.minimized
+            self.toggleSimulation()
 
     def quit(self):
         self.stoploop()
