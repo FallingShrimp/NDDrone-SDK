@@ -40,7 +40,7 @@ class TaskQueue(threading.Thread):
                 self.next()
             response = self.getMsg()
             if response:
-                loggerTaskQueue.info(f"task queue recv: {repr(response)}")
+                loggerTaskQueue.info(f"接收消息: {repr(response)}")
                 while self.paused:
                     time.sleep(0.1)
                 if response == "ok":
@@ -56,7 +56,7 @@ class TaskQueue(threading.Thread):
     def next(self):
         if len(self.stack) > 0:
             action = self.stack.pop(0)
-            loggerTaskQueue.info(f"task queue sent msg: {action}")
+            loggerTaskQueue.info(f"发送消息: {action}")
             self.drone._sock.sendto(action.encode("utf8"), self.drone._roboAddress)
             self.setAction(action)
             self.currentState = True
@@ -66,4 +66,4 @@ class TaskQueue(threading.Thread):
     def restore(self):
         self.currentState = not self.currentState
         self.stack.insert(0, self.lastAction)
-        loggerTaskQueue.info("restore")
+        loggerTaskQueue.info(f"恢复上一条动作: {self.lastAction}")

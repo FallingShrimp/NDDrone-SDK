@@ -18,9 +18,7 @@ def createServer(
 def waitClient(
     serverSocket: socket, maxRetryTimes: int
 ) -> tuple[socket, tuple[str, int]]:
-    loggerNetwork.info(
-        f"Waiting for client connection on {serverSocket.getsockname()}..."
-    )
+    loggerNetwork.info(f"等待客户端连接到{serverSocket.getsockname()}...")
 
     @retry(maxRetryTimes)
     def tryAccept():
@@ -33,9 +31,7 @@ def waitClient(
     if state:
         return result
     else:
-        loggerNetwork.warning(
-            f"Failed to accept client connection on {serverSocket.getsockname()}."
-        )
+        loggerNetwork.warning(f"接受客户端连接失败{serverSocket.getsockname()}。")
         return emptyTcp(), emptyAddress()
 
 
@@ -48,7 +44,7 @@ def emptyAddress():
 
 
 def createClient(address: tuple[str, int], maxRetryTimes: int) -> socket:
-    loggerNetwork.info(f"Connecting to {address}...")
+    loggerNetwork.info(f"正在连接到{address}...")
 
     @retry(maxRetryTimes)
     def tryConnect():
@@ -63,7 +59,7 @@ def createClient(address: tuple[str, int], maxRetryTimes: int) -> socket:
     if state:
         return result
     else:
-        loggerNetwork.warning(f"Failed to connect to {address}.")
+        loggerNetwork.warning(f"连接到{address}失败。")
         return emptyTcp()
 
 

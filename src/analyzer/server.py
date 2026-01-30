@@ -71,7 +71,7 @@ class NeuroApiServer(threading.Thread):
                     messages.remove("")
                     for message in messages:
                         loggerNeuroApi.info(
-                            f"[white]Received message: [bold]{message}[/bold][/white]"
+                            f"[white]收到消息: [bold]{message}[/bold][/white]"
                         )
                         self.messageQueue.put(message)
                         event = message[0:4]
@@ -87,4 +87,4 @@ class NeuroApiServer(threading.Thread):
         self.deviceThread.disconnect()
         self.clientServer.close()
         self.clientSocket.close()
-        loggerNeuroApi.info("Server stopped.")
+        loggerNeuroApi.info("服务器已关闭。")

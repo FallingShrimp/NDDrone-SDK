@@ -29,10 +29,7 @@ class SendMessageThread(Thread):
                     break
                 response, ip = self._sock.recvfrom(128)
                 response = response.decode(encoding="utf-8")
-                if response == "ok" or response == "error":
-                    loggerDrone.info("RoboMaster Received  message: " + response)
-                else:
-                    loggerDrone.info("Received message: " + response)
+                loggerDrone.info("收到消息: " + response)
                 self.recb(response)
                 time.sleep(0.01)
             except Exception as e:
@@ -40,14 +37,14 @@ class SendMessageThread(Thread):
                     break
                 loggerDrone.error(e)
                 time.sleep(1)
-        loggerDrone.warning("Disconnected.")
+        loggerDrone.warning("已断开连接。")
 
     def send(self, message: str):
         try:
-            loggerDrone.info("Send message: " + message)
+            loggerDrone.info("发送消息: " + message)
             self._sock.sendto(message.encode(encoding="utf-8"), self._roboAddress)
         except Exception as e:
-            loggerDrone.error("RoboMaster Error sending: " + str(e))
+            loggerDrone.error("发送失败: " + str(e))
 
     def close(self):
         self._is_running = False

@@ -44,29 +44,29 @@ class NDDroneFlymode:
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
-        loggerMain.info("Quitted.")
-        loggerMain.info("Waiting for NeuroAPI to stop...")
+        loggerMain.info("已退出。")
+        loggerMain.info("等待NeuroAPI关闭...")
         core.quit()
 
     def stoploop(self):  # 只是停止主循环，不会清理线程&刺激块窗口
         self.running = False
 
     def init(self):
-        loggerMain.info("NDDrone-flymode initializing...")
-        loggerMain.info("Starting drone...")
+        loggerMain.info("NDDrone-flymode 正在初始化...")
+        loggerMain.info("正在启动无人机...")
         self.drone.start()
         self.drone.send("command")
         time.sleep(1)
         self.drone.send("motoron")
-        loggerMain.info("Loading frames...")
+        loggerMain.info("正在加载逐帧图...")
         self.simulation.coverText("Loading...", True)
         try:
             self.simulation.loadFlickerFrames(self.picturePath)
             self.simulation.loadDynamicFrames(self.backgroundPath, self.promptPath)
         except OSError:
-            loggerMain.error("Frame files not found! Please generate before start.")
+            loggerMain.error("未找到帧文件！请先运行生成命令。")
             self.quit()
-        loggerMain.info("Simulation ready!")
+        loggerMain.info("闪烁窗口已就绪！")
 
     def mainloop(self):
         self.running = True

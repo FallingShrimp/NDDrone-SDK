@@ -41,13 +41,11 @@ class ReceiveMessageThread(threading.Thread):
                             action = store[result]()
                             self.drone.send(str(action))
                         else:
-                            loggerBehaviour.warning(
-                                f"Handler not registered for result {result}."
-                            )
+                            loggerBehaviour.warning(f"指令{result}未注册处理程序。")
             except OSError:
                 self.stop_event.set()
             time.sleep(0.01)
-        loggerBehaviour.warning("Disconnected.")
+        loggerBehaviour.warning("已断开连接。")
 
     def close(self):
         self.stop_event.set()

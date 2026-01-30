@@ -1,7 +1,5 @@
 import struct
 
-from loggers import loggerDevice
-
 
 class Constant:
     stx = 0x02
@@ -569,14 +567,11 @@ class Decoder:
                         res["timestamp"] = timestamp
                         res["data"] = datas
                         res["model"] = model
-                    else:
-                        loggerDevice.error("crc error")
                     self.clear()
                 else:
                     self.clear()
-            except Exception as e:
+            except Exception:
                 self.clear()
-                loggerDevice.error(e)
                 return res
         return res
 
@@ -720,9 +715,6 @@ class Decoder:
                             point_count_per_channel_bytes, byteorder="big", signed=True
                         )
                         payload_index = 2 + payload_index
-                        loggerDevice.info(
-                            f"channel count:{channel_count}, point count per channel:{point_count_per_channel}"
-                        )
                         datas = []
                         for i in range(channel_count):
                             ch_bytes = self.__payload[
@@ -735,14 +727,11 @@ class Decoder:
                         res["timestamp"] = timestamp
                         res["data"] = datas
                         res["model"] = model
-                    else:
-                        loggerDevice.error("crc error")
                     self.clear()
                 else:
                     self.clear()
-            except Exception as e:
+            except Exception:
                 self.clear()
-                loggerDevice.error(e)
         return res
 
     def points_by_4bytes(self, datas):

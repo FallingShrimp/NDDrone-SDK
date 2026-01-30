@@ -90,7 +90,7 @@ class NDThread(threading.Thread):
                 (start_millis_second - eeg_packet_start_millis) * point_per_millis
             )
             if eeg_start_position < 0:
-                loggerNeuroApi.error("eeg time error:{0}".format(eeg_start_position))
+                loggerNeuroApi.warning("eeg 时间错误:{0}".format(eeg_start_position))
                 eeg_start_position = 0
             eeg_tmp = []
             eeg_data_length = 0
@@ -108,11 +108,11 @@ class NDThread(threading.Thread):
                 eeg_data = eeg_data[
                     :, eeg_start_position : (eeg_start_position + need_points)
                 ]
-                loggerNeuroApi.info(f"eeg start points: {eeg_start_position}")
-                loggerNeuroApi.info(f"need points: {need_points}")
-                loggerNeuroApi.info(f"start millis second: {start_millis_second}")
-                loggerNeuroApi.info(f"eeg packet millis: {eeg_packet_start_millis}")
-                loggerNeuroApi.info(f"eeg data shape: {eeg_data.shape}")
+                loggerNeuroApi.info(f"eeg起始点: {eeg_start_position}")
+                loggerNeuroApi.info(f"总计点数: {need_points}")
+                loggerNeuroApi.info(f"开始时间: {start_millis_second}")
+                loggerNeuroApi.info(f"eeg数据包时长: {eeg_packet_start_millis}")
+                loggerNeuroApi.info(f"eeg数据形状: {eeg_data.shape}")
                 break
         return eeg_data
 
