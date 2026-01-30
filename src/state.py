@@ -10,9 +10,8 @@ def prompt():
         f"飞控：{formatAsSwitch(flymode)}，NeuroAPI：{formatAsSwitch(neuroapi)}"
     )
     if not flymode and not neuroapi:
-        loggerMain.info("所有组件已停止运行，按下Enter退出程序。")
-        input("")
         totalLogger.export("log.json")
+        core.wait(3)
         core.quit()
 
 

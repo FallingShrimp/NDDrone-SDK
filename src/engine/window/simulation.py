@@ -21,6 +21,15 @@ class SimulationWindow(visual.Window):
         )
         self.progressBar = ProgressBar(self, (0, -100), (1000, 20))
         self.winHandle = cast(pyglet.Win32Window, self.winHandle)
+        self.minimized = False
+
+        @self.winHandle.event
+        def on_hide():
+            self.minimized = True
+
+        @self.winHandle.event
+        def on_show():
+            self.minimized = False
 
     def coverText(self, text: str, draw: bool):
         stim = visual.TextStim(

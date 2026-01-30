@@ -39,12 +39,17 @@ class NDDroneFlymode:
         )
         # 初始化闪烁窗口
         self.simulation = SimulationWindow(config.windowSize)
-        keyboard.add_hotkey(
-            "m",
-            lambda: self.simulation.winHandle.set_visible(
-                not self.simulation.winHandle.visible
-            ),
-        )
+        keyboard.add_hotkey("m", self.toggleSimulation)
+
+    def toggleSimulation(self):
+        if self.simulation.minimized:
+            self.simulation.winHandle.maximize()
+            self.simulation.winHandle.activate()
+            self.simulation.flip()
+            loggerMain.info("窗口已最大化")
+        else:
+            self.simulation.winHandle.minimize()
+            loggerMain.info("窗口已最小化")
 
     def quit(self):
         self.stoploop()
