@@ -2,6 +2,7 @@ import os
 import time
 import warnings
 import state
+import keyboard
 
 from psychopy import core, event, logging
 
@@ -38,6 +39,12 @@ class NDDroneFlymode:
         )
         # 初始化闪烁窗口
         self.simulation = SimulationWindow(config.windowSize)
+        keyboard.add_hotkey(
+            "m",
+            lambda: self.simulation.winHandle.set_visible(
+                not self.simulation.winHandle.visible
+            ),
+        )
 
     def quit(self):
         self.stoploop()
@@ -87,7 +94,7 @@ class NDDroneFlymode:
                     loggerMain.info("正在闪烁")
                     # 没连上就说明单纯调试刺激块屏幕，不管他即可
                     if checkConnection(self.neuroApiSocket):
-                        # 给NeuroAI发消息准备开始接收识别结果
+                        # 给NeuroAPI发消息准备开始接收识别结果
                         currentTime = int(time.time() * 1000)
                         self.neuroApiSocket.send(f"TIME:{currentTime}\n".encode("utf8"))
                     # 开始闪烁

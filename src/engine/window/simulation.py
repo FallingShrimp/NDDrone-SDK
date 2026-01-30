@@ -1,7 +1,7 @@
 import os
-
+import pyglet.window.win32 as pyglet
 from psychopy import visual
-
+from typing import cast
 from config import config
 from engine.window.components import ProgressBar
 
@@ -20,6 +20,7 @@ class SimulationWindow(visual.Window):
             allowGUI=True,
         )
         self.progressBar = ProgressBar(self, (0, -100), (1000, 20))
+        self.winHandle = cast(pyglet.Win32Window, self.winHandle)
 
     def coverText(self, text: str, draw: bool):
         stim = visual.TextStim(
