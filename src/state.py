@@ -1,5 +1,5 @@
 from psychopy import core
-from loggers import loggerMain
+from loggers import loggerMain, totalLogger
 
 flymode = True
 neuroapi = True
@@ -12,6 +12,7 @@ def prompt():
     if not flymode and not neuroapi:
         loggerMain.info("所有组件已停止运行，按下Enter退出程序。")
         input("")
+        totalLogger.export("log.json")
         core.quit()
 
 

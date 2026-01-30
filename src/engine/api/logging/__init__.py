@@ -1,8 +1,9 @@
 import datetime
 
 import rich
-from pydantic import BaseModel
-
+import json
+from pydantic import BaseModel, FieldSerializationInfo, field_serializer
+from typing import Union
 from engine.api.logging.constants import MESSAGETYPE_COLOR_MAP, MessageType
 from engine.api.timer import format
 
@@ -12,6 +13,10 @@ class LogRecord(BaseModel):
     message: str
     time: datetime.datetime
     moduleName: str
+
+    @field_serializer("time")
+    def serialize_time(self, dt: datetime.datetime, _info: FieldSerializationInfo):
+        return dt.isoformat()
 
     def __init__(
         self,
@@ -36,14 +41,26 @@ class LogRecord(BaseModel):
 class Logger:
     records: list[LogRecord]
     moduleName: str
+    parent: Union["Logger", None]
 
-    def __init__(self, moduleName: str) -> None:
+    def __init__(self, moduleName: str, parent: Union["Logger", None] = None) -> None:
         self.records = []
         self.moduleName = moduleName
+        self.parent = parent
+
+    def toRaw(self) -> list[dict]:
+        return [record.model_dump() for record in self.records]
+
+    def export(self, to: str):
+        self.info(f"正在导出日志到{to}...")
+        with open(to, "w", encoding="utf8") as f:
+            json.dump(self.toRaw(), f, ensure_ascii=False, indent=4)
 
     def log(self, type: MessageType, message: str):
         record = LogRecord(type, message, self.moduleName)
         self.records.append(record)
+        if self.parent:
+            self.parent.records.append(record)
         record.print()
 
     def info(self, message: str):

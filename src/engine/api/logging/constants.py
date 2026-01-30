@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class MessageType(Enum):
+class MessageType(int, Enum):
     INFO = 0
     WARNING = 1
     ERROR = 2

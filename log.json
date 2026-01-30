@@ -1,0 +1,140 @@
+[
+    {
+        "type": 0,
+        "message": "正在连接到('127.0.0.1', 11000)...",
+        "time": "2026-01-30T18:17:17.524331",
+        "moduleName": "Network"
+    },
+    {
+        "type": 0,
+        "message": "等待客户端连接到('0.0.0.0', 11000)...",
+        "time": "2026-01-30T18:17:17.526840",
+        "moduleName": "Network"
+    },
+    {
+        "type": 0,
+        "message": "正在连接到('127.0.0.1', 8899)...",
+        "time": "2026-01-30T18:17:17.553739",
+        "moduleName": "Network"
+    },
+    {
+        "type": 0,
+        "message": "NDDrone-flymode 正在初始化...",
+        "time": "2026-01-30T18:17:18.048831",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "正在启动无人机...",
+        "time": "2026-01-30T18:17:18.050416",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "发送消息: command",
+        "time": "2026-01-30T18:17:18.050963",
+        "moduleName": "RoboMaster"
+    },
+    {
+        "type": 0,
+        "message": "发送消息: motoron",
+        "time": "2026-01-30T18:17:19.052100",
+        "moduleName": "RoboMaster"
+    },
+    {
+        "type": 0,
+        "message": "正在加载逐帧图...",
+        "time": "2026-01-30T18:17:19.053108",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "闪烁窗口已就绪！",
+        "time": "2026-01-30T18:17:23.316817",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "正在闪烁",
+        "time": "2026-01-30T18:17:24.382303",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "正在退出",
+        "time": "2026-01-30T18:17:25.719154",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "发送消息: land",
+        "time": "2026-01-30T18:17:25.803958",
+        "moduleName": "RoboMaster"
+    },
+    {
+        "type": 1,
+        "message": "已断开连接。",
+        "time": "2026-01-30T18:17:25.814647",
+        "moduleName": "CommandBehaviour"
+    },
+    {
+        "type": 1,
+        "message": "已断开连接。",
+        "time": "2026-01-30T18:17:25.905394",
+        "moduleName": "RoboMaster"
+    },
+    {
+        "type": 0,
+        "message": "已退出。",
+        "time": "2026-01-30T18:17:25.905394",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "飞控：[red]已停止[/red]，NeuroAPI：[green]正在运行[/green]",
+        "time": "2026-01-30T18:17:25.905394",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 1,
+        "message": "连接到('127.0.0.1', 8899)失败。",
+        "time": "2026-01-30T18:17:27.719924",
+        "moduleName": "Network"
+    },
+    {
+        "type": 0,
+        "message": "[white]收到消息: [bold]TIME:1769768244382[/bold][/white]",
+        "time": "2026-01-30T18:17:27.722021",
+        "moduleName": "NeuroAPI"
+    },
+    {
+        "type": 0,
+        "message": "[white]收到消息: [bold]STOP[/bold][/white]",
+        "time": "2026-01-30T18:17:27.723645",
+        "moduleName": "NeuroAPI"
+    },
+    {
+        "type": 0,
+        "message": "服务器已关闭。",
+        "time": "2026-01-30T18:17:27.725900",
+        "moduleName": "NeuroAPI"
+    },
+    {
+        "type": 0,
+        "message": "飞控：[red]已停止[/red]，NeuroAPI：[red]已停止[/red]",
+        "time": "2026-01-30T18:17:27.725900",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "所有组件已停止运行，按下Enter退出程序。",
+        "time": "2026-01-30T18:17:27.726905",
+        "moduleName": "FlymodeMain"
+    },
+    {
+        "type": 0,
+        "message": "正在导出日志到log.json...",
+        "time": "2026-01-30T18:17:28.862775",
+        "moduleName": "Total"
+    }
+]
