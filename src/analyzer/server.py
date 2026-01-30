@@ -38,8 +38,6 @@ class AnalyzerServer(threading.Thread):
 
     def quit(self):
         self.apiServer.quit()
-        state.neuroai = False
-        state.prompt()
 
 
 class NeuroApiServer(threading.Thread):
@@ -91,3 +89,5 @@ class NeuroApiServer(threading.Thread):
         self.clientServer.close()
         self.clientSocket.close()
         loggerNeuroApi.info("服务器已关闭。")
+        state.neuroapi = False
+        state.prompt()

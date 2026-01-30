@@ -1,12 +1,19 @@
-from psychopy import event, core
+from psychopy import core
 from loggers import loggerMain
 
 flymode = True
-neuroai = True
+neuroapi = True
 
 
 def prompt():
-    if not flymode and not neuroai:
-        loggerMain.info("所有任务已结束，按下任意键退出程序。")
-        event.waitKeys()
+    loggerMain.info(
+        f"飞控：{formatAsSwitch(flymode)}，NeuroAPI：{formatAsSwitch(neuroapi)}"
+    )
+    if not flymode and not neuroapi:
+        loggerMain.info("所有组件已停止运行，按下Enter退出程序。")
+        input("")
         core.quit()
+
+
+def formatAsSwitch(state: bool) -> str:
+    return "[green]正在运行[/green]" if state else "[red]已停止[/red]"
