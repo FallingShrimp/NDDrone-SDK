@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+import shutil
 
 a = Analysis(
     ["src\\index.py"],
@@ -7,10 +7,15 @@ a = Analysis(
     binaries=[],
     datas=[
         ("assets", "assets"),
-        ("config.ini", "config.ini"),
         ("venv\\Lib\\site-packages\\rich\\_unicode_data", "rich\\_unicode_data"),
     ],
-    hiddenimports=[],
+    hiddenimports=[
+        "psychopy.visual.backends.pygletbackend",
+        "psychopy.visual.backends.pygamebackend",
+        "psychopy.visual.backends.glfwbackend",
+        "psychopy.visual.line",
+        "psychopy.iohub.devices.display",
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -19,14 +24,15 @@ a = Analysis(
     optimize=0,
 )
 pyz = PYZ(a.pure)
-
+shutil.copytree("assets", "dist\\assets", dirs_exist_ok=True)
+shutil.copy("config.ini", "dist\\config.ini")
 exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
     a.datas,
     [],
-    name="index",
+    name="NDDrone",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

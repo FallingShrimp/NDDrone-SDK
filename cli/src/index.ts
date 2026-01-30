@@ -11,7 +11,14 @@ async function main() {
     program
         .name(packageData.name)
         .version(packageData.version);
-
+    program.command("build")
+        .action(() => {
+            try {
+                childProcess.execSync("pyinstaller index.spec", { stdio: "inherit" });
+            } catch {
+                console.log("");
+            }
+        });
     program.command("start")
         .action(() => {
             try {

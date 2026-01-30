@@ -1,7 +1,8 @@
 import os
 import time
+import warnings
 
-from psychopy import core, event
+from psychopy import core, event, logging
 
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
@@ -10,6 +11,9 @@ from engine.util.workdir import fromAssets
 from engine.window.simulation import SimulationWindow
 from loggers import loggerMain
 from config import config
+
+logging.console.setLevel(logging.CRITICAL)
+warnings.filterwarnings("ignore")
 
 
 class NDDroneFlymode:
