@@ -3,18 +3,17 @@ import time
 
 from psychopy import core, event
 
-from engine.core.configCore import Config
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.connection import checkConnection, createClient
 from engine.util.workdir import fromAssets
 from engine.window.simulation import SimulationWindow
 from loggers import loggerMain
+from config import config
 
 
 class NDDroneFlymode:
     def __init__(self):
-        self.config = Config()
         # 配置一些路径常量
         self.picturePath = fromAssets("frames")
         self.backgroundPath = fromAssets("background.jpg")
@@ -22,7 +21,7 @@ class NDDroneFlymode:
         # 主循环状态
         self.running = False
         # NeuroAPI接收数据
-        self.neuroApiSocket = createClient(self.config.neuroApiAddress, 1)
+        self.neuroApiSocket = createClient(config.neuroApiAddress, 1)
         self.neuroApiSocket.settimeout(20000)
         # 无人机发送指令
         self.drone = SendMessageThread(("192.168.10.1", 8889))
@@ -33,7 +32,7 @@ class NDDroneFlymode:
             50,
         )
         # 初始化闪烁窗口
-        self.simulation = SimulationWindow(self.config.windowSize)
+        self.simulation = SimulationWindow(config.windowSize)
 
     def quit(self):
         self.stoploop()
@@ -59,7 +58,6 @@ class NDDroneFlymode:
         time.sleep(1)
         self.drone.send("motoron")
         loggerMain.info("正在加载逐帧图...")
-        self.simulation.coverText("Loading...", True)
         try:
             self.simulation.loadFlickerFrames(self.picturePath)
             self.simulation.loadDynamicFrames(self.backgroundPath, self.promptPath)
@@ -77,9 +75,11 @@ class NDDroneFlymode:
             try:
                 keys = event.getKeys(keyList=["space", "escape"])
                 if "escape" in keys:
+                    loggerMain.info("正在退出")
                     self.stoploop()
                     break
                 elif "space" in keys:
+                    loggerMain.info("正在闪烁")
                     # 没连上就说明单纯调试刺激块屏幕，不管他即可
                     if checkConnection(self.neuroApiSocket):
                         # 给NeuroAI发消息准备开始接收识别结果

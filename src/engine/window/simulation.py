@@ -2,12 +2,11 @@ import os
 
 from psychopy import visual
 
+from config import config
+
 
 class SimulationWindow(visual.Window):
-    def __init__(
-        self,
-        size: tuple[int, int],
-    ):
+    def __init__(self, size: tuple[int, int]):
         super().__init__(
             size,
             monitor="testMonitor",
@@ -49,13 +48,14 @@ class SimulationWindow(visual.Window):
 
     def loadFlickerFrames(self, picturePath: str):
         result: list[visual.ImageStim] = []
-        for frameIndex in range(180):
+        for frameIndex in range(config.frameCount):
             result.append(
                 self.coverImage(
                     os.path.join(picturePath, f"{frameIndex}.png"),
                     False,
                 )
             )
+            self.coverText(f"Loading {frameIndex}/{config.frameCount}...", True)
         self.flickerFrames = result
         return result
 

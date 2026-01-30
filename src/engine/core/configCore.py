@@ -1,4 +1,5 @@
 import numpy as np
+from configparser import ConfigParser
 
 
 class Config:
@@ -11,6 +12,7 @@ class Config:
         self.displayINFO()
         self.expINFO()
         self.connectINFO()
+        self.externalINFO()
 
     def displayINFO(self, refreshRate=60, window_size=(1920, 1080)):
         self.refreshRate = refreshRate
@@ -40,6 +42,7 @@ class Config:
         self.deviceAddress = deviceAddress
         self.neuroApiAddress = neuroApiAddress
 
-
-if __name__ == "__main__":
-    config = Config()
+    def externalINFO(self):
+        cf = ConfigParser()
+        cf.read("config.ini")
+        self.frameCount = cf.getint("frames", "count")
