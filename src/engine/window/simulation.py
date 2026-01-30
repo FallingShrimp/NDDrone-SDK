@@ -3,6 +3,7 @@ import os
 from psychopy import visual
 
 from config import config
+from engine.window.components import ProgressBar
 
 
 class SimulationWindow(visual.Window):
@@ -18,6 +19,7 @@ class SimulationWindow(visual.Window):
             screen=0,
             allowGUI=True,
         )
+        self.progressBar = ProgressBar(self, (0, -100), (1000, 20))
 
     def coverText(self, text: str, draw: bool):
         stim = visual.TextStim(
@@ -26,6 +28,7 @@ class SimulationWindow(visual.Window):
             text=text,
             color=(255, 255, 255),
             colorSpace="rgb255",
+            bold=True,
         )
         if draw:
             stim.draw()
@@ -55,7 +58,8 @@ class SimulationWindow(visual.Window):
                     False,
                 )
             )
-            self.coverText(f"Loading {frameIndex}/{config.frameCount}...", True)
+            self.updateProgress(frameIndex / config.frameCount)
+            self.coverText(f"Loading frames {frameIndex}/{config.frameCount}...", True)
         self.flickerFrames = result
         return result
 
@@ -77,3 +81,7 @@ class SimulationWindow(visual.Window):
     def prompt(self):
         self.promptStim.draw()
         self.flip()
+
+    def updateProgress(self, progress: float):
+        self.progressBar.progress = progress
+        self.progressBar.draw()
