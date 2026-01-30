@@ -5,7 +5,11 @@ a = Analysis(
     ["src\\index.py"],
     pathex=[],
     binaries=[],
-    datas=[("assets", "assets"), ("config.ini", "config.ini")],
+    datas=[
+        ("assets", "assets"),
+        ("config.ini", "config.ini"),
+        ("venv\\Lib\\site-packages\\rich\\_unicode_data", "rich\\_unicode_data"),
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
