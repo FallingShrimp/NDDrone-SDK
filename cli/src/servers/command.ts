@@ -1,7 +1,7 @@
-import { DroneServer } from "../connection";
+import { BaseDroneServer } from "../connection";
 import { DRONE_ADDRESS } from "../constants";
 
-export class CommandServer extends DroneServer {
+export class CommandServer extends BaseDroneServer {
     constructor() {
         super("udp4", DRONE_ADDRESS);
     }

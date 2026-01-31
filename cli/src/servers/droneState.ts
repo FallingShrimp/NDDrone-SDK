@@ -1,5 +1,5 @@
-import { DroneServer, Initializable } from "../connection";
-import { STATE_SERVER_ADDRESS } from "../constants";
+import { BaseDroneServer, Initializable } from "../connection";
+import { DRONE_ADDRESS, STATE_SERVER_ADDRESS } from "../constants";
 
 export interface DroneState {
     mid: number,
@@ -48,7 +48,7 @@ export const keyMap: Record<string, string> = {
     agy: "Y轴加速度",
     agz: "Z轴加速度",
 };
-export class DroneStateServer extends DroneServer implements Initializable {
+export class DroneStateServer extends BaseDroneServer implements Initializable {
     current: DroneState | null = null;
     constructor() {
         super("udp4", undefined, STATE_SERVER_ADDRESS);
@@ -69,6 +69,12 @@ export class DroneStateServer extends DroneServer implements Initializable {
         return Object.entries(this.current ?? {}).map(([key, value]: [string, number]) => `${keyMap[key]}：${value}`).join(",\n");
     }
     async initialize(): Promise<void> {
-        await this.polling((stop) => this.current && stop(), 500);
+        await this.polling((stop) => {
+            if (this.current) {
+                stop();
+            } else {
+                this.send("command", DRONE_ADDRESS);
+            }
+        }, 500);
     }
 }

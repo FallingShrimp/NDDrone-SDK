@@ -1,27 +1,27 @@
 import dgram from "dgram";
 import { Address } from "./constants";
 
-export interface Oncable extends DroneServer {
+export interface Oncable extends BaseDroneServer {
     doOnce(): Promise<void>;
 }
-export interface Initializable extends DroneServer {
+export interface Initializable extends BaseDroneServer {
     initialize(): Promise<void>;
 }
-export abstract class DroneServer {
-    socket: dgram.Socket;
+export abstract class BaseDroneServer {
+    peer: dgram.Socket;
     remoteAddress?: Address;
     selfAddress?: Address;
 
     lastReceiveTime: number = 0;
     constructor(type: dgram.SocketType, remoteAddress?: Address, selfAddress?: Address) {
-        this.socket = dgram.createSocket(type);
+        this.peer = dgram.createSocket(type);
         this.remoteAddress = remoteAddress;
         this.selfAddress = selfAddress;
         if (selfAddress) {
             const [host, port] = selfAddress;
-            this.socket.bind(port, host);
+            this.peer.bind(port, host);
         }
-        this.socket.on("message", (msg, rinfo) => {
+        this.peer.on("message", (msg, rinfo) => {
             this.lastReceiveTime = Date.now();
             this.receive(msg.toString(), rinfo);
         });
@@ -35,7 +35,7 @@ export abstract class DroneServer {
                 return;
             }
             const [host, port] = addr;
-            this.socket.send(Buffer.from(message), port, host, (err) => {
+            this.peer.send(Buffer.from(message), port, host, (err) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -51,7 +51,7 @@ export abstract class DroneServer {
                 timeouted = true;
                 reject(new Error("响应超时"));
             }, timeout);
-            this.socket.once("message", (message) => {
+            this.peer.once("message", (message) => {
                 clearTimeout(timer);
                 if (!timeouted) resolve(message.toString());
             });

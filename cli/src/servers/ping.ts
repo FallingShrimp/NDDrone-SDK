@@ -1,7 +1,7 @@
-import { DroneServer, Oncable } from "../connection";
+import { BaseDroneServer, Oncable } from "../connection";
 import { DRONE_ADDRESS } from "../constants";
 
-export class PingServer extends DroneServer implements Oncable {
+export class PingServer extends BaseDroneServer implements Oncable {
     constructor() {
         super("udp4", DRONE_ADDRESS);
     }
