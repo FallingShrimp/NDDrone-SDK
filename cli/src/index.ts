@@ -10,7 +10,8 @@ import { PingServer } from "./servers/ping";
 async function main() {
     program
         .name(packageData.name)
-        .version(packageData.version);
+        .version(packageData.version)
+        .description(packageData.description);
     program.command("build")
         .action(() => {
             try {
@@ -61,7 +62,9 @@ async function main() {
         .option("-w, --watch", "是否持续视奸无人机状态", false)
         .action(async (options: { watch: boolean }) => {
             const droneState = new DroneStateServer();
+            process.stdout.write("正在连接无人机...");
             await droneState.initialize();
+            console.log("连接成功。");
             do {
                 console.log(droneState.toString());
             } while (options.watch);

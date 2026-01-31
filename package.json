@@ -1,5 +1,5 @@
 {
-    "name": "nddrone-sdk",
+    "name": "drone",
     "version": "1.0.0",
     "repository": "https://github.com/Rundll86/NDDrone-SDK.git",
     "description": "基于脑机接口（BCI）的意念无人机控制系统。",
