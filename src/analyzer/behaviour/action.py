@@ -25,6 +25,7 @@ class BaseCommand:
     ) -> None:
         self.main = main
         self.args = args
+        self.handler = handler
 
 
 def command(*args: ArgumentSlot):
@@ -59,8 +60,8 @@ def parseArgs(rawArgs: list[str], template: tuple[ArgumentSlot, ...]):
     return result
 
 
-def run(rawCommand: str, analyzer: NeuroApiServer) -> str | None:
+def run(rawCommand: str, apiServer: NeuroApiServer) -> str | None:
     main, rawArgs = cut(rawCommand)
     base = store[main]
     realArgs = parseArgs(rawArgs, base.args)
-    return base.handler(**(realArgs | {"analyzer": analyzer}))
+    return base.handler(**(realArgs | {"apiServer": apiServer}))

@@ -11,7 +11,7 @@ def prompt():
     )
     if not flymode and not neuroapi:
         totalLogger.export("log.json")
-        core.wait(3)
+        core.wait(1)
         core.quit()
 
 

@@ -7,7 +7,7 @@ import state
 from analyzer.spatialFilter import FBCCA
 from engine.core.configCore import Config
 from engine.thread.NDThread import NDThread, loggerNeuroApi
-from engine.util.network import createServer, waitClient
+from engine.util.network import checkConnection, createServer, waitClient
 
 
 class AnalyzerServer(threading.Thread):
@@ -21,7 +21,10 @@ class AnalyzerServer(threading.Thread):
     def run(self):
         while self.apiServer.running:
             try:
-                if self.apiServer.messageQueue.qsize() > 0:
+                if (
+                    checkConnection(self.apiServer.clientSocket)
+                    and self.apiServer.messageQueue.qsize() > 0
+                ):
                     message = self.apiServer.messageQueue.get()
                     loggerNeuroApi.info(
                         f"[white]处理消息: [bold]{message}[/bold][/white]"
@@ -29,10 +32,10 @@ class AnalyzerServer(threading.Thread):
                     result = self.parseCommand(message)
                     if result:
                         self.apiServer.clientSocket.send(result.encode("utf8"))
-                    time.sleep(0.01)
+                time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)
-                self.apiServer.running = False
+                time.sleep(0.01)
 
 
 class NeuroApiServer(threading.Thread):
