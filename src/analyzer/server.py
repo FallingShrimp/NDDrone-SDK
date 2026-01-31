@@ -11,10 +11,10 @@ from engine.util.connection import createServer, waitClient
 
 
 class AnalyzerServer(threading.Thread):
-    def __init__(self, commandParser: Callable[[str], str | None]) -> None:
+    def __init__(self, parseCommand: Callable[[str], str | None]) -> None:
         super().__init__()
         self.apiServer = NeuroApiServer()
-        self.commandParser = commandParser
+        self.parseCommand = parseCommand
 
     def run(self):
         self.apiServer.start()
@@ -22,7 +22,7 @@ class AnalyzerServer(threading.Thread):
             try:
                 if self.apiServer.messageQueue.qsize() > 0:
                     message = self.apiServer.messageQueue.get()
-                    result = self.commandParser(message)
+                    result = self.parseCommand(message)
                     if result:
                         self.apiServer.clientSocket.send(result.encode("utf8"))
                     time.sleep(0.01)
