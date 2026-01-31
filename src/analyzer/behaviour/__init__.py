@@ -1,15 +1,15 @@
-from analyzer.behaviour.action import ArgumentSlot, command
+from analyzer.behaviour.parser import ArgumentSlot, command
 from analyzer.server import NeuroApiServer
 from engine.util.network import checkConnection
 
 
-@command()
+@command(type="command")
 def STOP(apiServer: NeuroApiServer):
     apiServer.running = False
     apiServer.quit()
 
 
-@command(ArgumentSlot("timestamp", int))
+@command(ArgumentSlot("timestamp", int), type="receiveMessage")
 def TIME(timestamp: int, apiServer: NeuroApiServer):
     result = 0
     if checkConnection(apiServer.deviceThread.sock):

@@ -1,9 +1,10 @@
-from typing import Callable, Type
-from analyzer.server import NeuroApiServer
+from typing import Any, Callable, Literal, Type
 
-store: dict[str, "BaseCommand"] = {}
+sendStore: dict[str, "BaseCommand"] = {}
+receiveStore: dict[str, "BaseCommand"] = {}
 
 CommandHandler = Callable[..., str | None]
+ParserType = Literal["command"] | Literal["receiveMessage"]
 
 
 class ArgumentSlot:
@@ -28,10 +29,14 @@ class BaseCommand:
         self.handler = handler
 
 
-def command(*args: ArgumentSlot):
+def getStore(type: ParserType):
+    return sendStore if type == "command" else receiveStore
+
+
+def command(*args: ArgumentSlot, type: ParserType):
     def decorator(func: CommandHandler):
         name = func.__name__
-        store[name] = BaseCommand(name, args, func)
+        getStore(type)[name] = BaseCommand(name, args, func)
         return func
 
     return decorator
@@ -46,7 +51,7 @@ def cut(rawCommand: str) -> tuple[str, list[str]]:
         return rawCommand, []
 
 
-def parseArgs(rawArgs: list[str], template: tuple[ArgumentSlot, ...]):
+def parseArgs(rawArgs: list[str], template: tuple[ArgumentSlot, ...]) -> dict[str, Any]:
     if len(rawArgs) != len(template):
         raise ValueError("参数不匹配！")
     result = {}
@@ -60,8 +65,10 @@ def parseArgs(rawArgs: list[str], template: tuple[ArgumentSlot, ...]):
     return result
 
 
-def run(rawCommand: str, apiServer: NeuroApiServer) -> str | None:
+def parseCommand(
+    rawCommand: str, type: ParserType
+) -> tuple[str, dict[str, Any], BaseCommand]:
     main, rawArgs = cut(rawCommand)
-    base = store[main]
+    base = getStore(type)[main]
     realArgs = parseArgs(rawArgs, base.args)
-    return base.handler(**(realArgs | {"apiServer": apiServer}))
+    return main, realArgs, base

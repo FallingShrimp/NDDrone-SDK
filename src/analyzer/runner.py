@@ -1,5 +1,6 @@
 from analyzer.server import NeuroApiServer
-from analyzer.behaviour import init, action
+from analyzer.behaviour import init
+from analyzer.behaviour.runtime import run
 import threading
 
 init()
@@ -14,4 +15,4 @@ class NeuroApiRunner(threading.Thread):
         self.server.start()
 
     def parseCommand(self, message: str) -> str | None:
-        return action.run(message, self.server)
+        return run(message, self.server)

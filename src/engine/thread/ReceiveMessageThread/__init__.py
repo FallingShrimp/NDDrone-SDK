@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 
-from engine.api.behaviour.handler import store
+from engine.thread.ReceiveMessageThread.interpreter import run
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection
 from loggers import loggerBehaviour
@@ -35,13 +35,7 @@ class ReceiveMessageThread(threading.Thread):
                     if not data:
                         continue
                     message = data.decode("utf-8")
-                    if len(message) > 5:
-                        result = int(message[5:])
-                        if result in store:
-                            action = store[result]()
-                            self.drone.send(str(action))
-                        else:
-                            loggerBehaviour.warning(f"指令{result}未注册处理程序。")
+                    run(message, self)
             except OSError:
                 self.stop_event.set()
             time.sleep(0.01)
