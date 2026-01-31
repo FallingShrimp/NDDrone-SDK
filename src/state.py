@@ -1,13 +1,13 @@
 from psychopy import core
 from config import config
-from loggers import loggerMain, totalLogger
+from loggers import totalLogger
 
 flymode = True
 neuroapi = True
 
 
 def prompt():
-    loggerMain.info(
+    totalLogger.info(
         f"飞控：{formatAsSwitch(flymode)}，NeuroAPI：{formatAsSwitch(neuroapi)}"
     )
     if not flymode and not neuroapi:
