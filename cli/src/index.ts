@@ -1,5 +1,5 @@
 import { program } from "commander";
-import { input } from "./util";
+import { detachable, input } from "./util";
 import process from "process";
 import childProcess from "child_process";
 import packageData from "../../package.json";
@@ -46,16 +46,9 @@ async function main() {
             await pingServer.doOnce();
             console.log("连接成功。");
             while (true) {
-                try {
+                await detachable(async () => {
                     commandServer.send(await input("> "));
-                } catch (err) {
-                    if (err instanceof Error) {
-                        if (err.message.startsWith("Aborted")) {
-                            process.exit(0);
-                        }
-                        console.error(err.message);
-                    }
-                }
+                });
             }
         });
     program.command("state")
@@ -63,7 +56,9 @@ async function main() {
         .action(async (options: { watch: boolean }) => {
             const droneState = new DroneStateServer();
             process.stdout.write("正在连接无人机...");
-            await droneState.initialize();
+            await detachable(async () => {
+                await droneState.initialize();
+            });
             console.log("连接成功。");
             do {
                 console.log(droneState.toString());

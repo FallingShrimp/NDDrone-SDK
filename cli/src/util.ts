@@ -37,3 +37,14 @@ export async function input(prompt: string) {
     rl.close();
     return result;
 }
+export async function detachable(executor: () => Promise<void> | void) {
+    try {
+        await executor();
+    } catch (err) {
+        if (err instanceof Error) {
+            if (err.message.startsWith("Aborted")) {
+                process.exit(0);
+            } else throw err;
+        }
+    }
+}
