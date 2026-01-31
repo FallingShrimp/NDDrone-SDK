@@ -46,3 +46,4 @@ class Config:
         cf = ConfigParser()
         cf.read("config.ini")
         self.frameCount = cf.getint("frames", "count")
+        self.logfile = cf.get("run", "logfile")

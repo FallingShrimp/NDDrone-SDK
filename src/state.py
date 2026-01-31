@@ -1,4 +1,5 @@
 from psychopy import core
+from config import config
 from loggers import loggerMain, totalLogger
 
 flymode = True
@@ -10,7 +11,7 @@ def prompt():
         f"飞控：{formatAsSwitch(flymode)}，NeuroAPI：{formatAsSwitch(neuroapi)}"
     )
     if not flymode and not neuroapi:
-        totalLogger.export("log.json")
+        totalLogger.export(config.logfile)
         core.quit()
 
 
