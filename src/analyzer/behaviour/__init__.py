@@ -1,6 +1,8 @@
 from analyzer.behaviour.parser import ArgumentSlot, command
 from analyzer.server import NeuroApiServer
+from engine.api.command.builder import buildCommand
 from engine.util.network import checkConnection
+import random
 
 
 @command(type="command")
@@ -11,14 +13,14 @@ def STOP(apiServer: NeuroApiServer):
 
 @command(ArgumentSlot("timestamp", int), type="command")
 def TIME(timestamp: int, apiServer: NeuroApiServer):
-    result = 0
+    result = random.randint(0, 8)
     if checkConnection(apiServer.deviceThread.sock):
         epoch = apiServer.deviceThread.readFixedData(
             apiServer.config.winLEN + apiServer.config.lag,
             timestamp,
         )
         result = apiServer.analyzer.predict(epoch)[0]
-    return f"RSLT:{result}"
+    return buildCommand("RSLT", [result])
 
 
 def init():
