@@ -1,6 +1,7 @@
 import queue
 import threading
 import time
+from typing import Callable
 import state
 
 from analyzer.spatialFilter import FBCCA
@@ -10,9 +11,10 @@ from engine.util.connection import createServer, waitClient
 
 
 class AnalyzerServer(threading.Thread):
-    def __init__(self) -> None:
+    def __init__(self, commandParser: Callable[[str], str | None]) -> None:
         super().__init__()
         self.apiServer = NeuroApiServer()
+        self.commandParser = commandParser
 
     def run(self):
         self.apiServer.start()
@@ -20,16 +22,9 @@ class AnalyzerServer(threading.Thread):
             try:
                 if self.apiServer.messageQueue.qsize() > 0:
                     message = self.apiServer.messageQueue.get()
-                    if len(message) > 5:
-                        stimulationTime = int(message[5:])
-                        epoch = self.apiServer.deviceThread.readFixedData(
-                            self.apiServer.config.winLEN + self.apiServer.config.lag,
-                            stimulationTime,
-                        )
-                        result = self.apiServer.analyzer.predict(epoch)[0]
-                        self.apiServer.clientSocket.send(
-                            f"RSLT:{result}".encode("utf-8")
-                        )
+                    result = self.commandParser(message)
+                    if result:
+                        self.apiServer.clientSocket.send(result.encode("utf8"))
                     time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)
@@ -75,10 +70,6 @@ class NeuroApiServer(threading.Thread):
                             f"[white]收到消息: [bold]{message}[/bold][/white]"
                         )
                         self.messageQueue.put(message)
-                        event = message[0:4]
-                        if event == "STOP":
-                            self.running = False
-                            self.quit()
                 time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)
