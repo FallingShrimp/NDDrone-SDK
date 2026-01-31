@@ -9,7 +9,7 @@ from psychopy import core, event, logging
 
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
-from engine.util.connection import checkConnection, createClient
+from engine.util.network import checkConnection, createClient
 from engine.util.workdir import fromAssets
 from engine.window.simulation import SimulationWindow
 from loggers import loggerMain

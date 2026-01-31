@@ -1,5 +1,5 @@
 from typing import Callable, Type
-from analyzer.server import AnalyzerServer
+from analyzer.server import NeuroApiServer
 
 store: dict[str, "BaseCommand"] = {}
 
@@ -59,7 +59,7 @@ def parseArgs(rawArgs: list[str], template: tuple[ArgumentSlot, ...]):
     return result
 
 
-def run(rawCommand: str, analyzer: AnalyzerServer) -> str | None:
+def run(rawCommand: str, analyzer: NeuroApiServer) -> str | None:
     main, rawArgs = cut(rawCommand)
     base = store[main]
     realArgs = parseArgs(rawArgs, base.args)

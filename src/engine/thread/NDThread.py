@@ -5,7 +5,7 @@ from scipy import signal
 from scipy.signal import resample
 
 from engine.core.wheelCore import Decoder
-from engine.util.connection import checkConnection, createClient
+from engine.util.network import checkConnection, createClient
 from loggers import loggerNeuroApi
 
 

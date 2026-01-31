@@ -7,21 +7,25 @@ import state
 from analyzer.spatialFilter import FBCCA
 from engine.core.configCore import Config
 from engine.thread.NDThread import NDThread, loggerNeuroApi
-from engine.util.connection import createServer, waitClient
+from engine.util.network import createServer, waitClient
 
 
 class AnalyzerServer(threading.Thread):
-    def __init__(self, parseCommand: Callable[[str], str | None]) -> None:
+    def __init__(
+        self, parseCommand: Callable[[str], str | None], apiServer: "NeuroApiServer"
+    ) -> None:
         super().__init__()
-        self.apiServer = NeuroApiServer()
         self.parseCommand = parseCommand
+        self.apiServer = apiServer
 
     def run(self):
-        self.apiServer.start()
         while self.apiServer.running:
             try:
                 if self.apiServer.messageQueue.qsize() > 0:
                     message = self.apiServer.messageQueue.get()
+                    loggerNeuroApi.info(
+                        f"[white]处理消息: [bold]{message}[/bold][/white]"
+                    )
                     result = self.parseCommand(message)
                     if result:
                         self.apiServer.clientSocket.send(result.encode("utf8"))
@@ -29,14 +33,10 @@ class AnalyzerServer(threading.Thread):
             except Exception as e:
                 loggerNeuroApi.error(e)
                 self.apiServer.running = False
-        self.quit()
-
-    def quit(self):
-        self.apiServer.quit()
 
 
 class NeuroApiServer(threading.Thread):
-    def __init__(self):
+    def __init__(self, parseCommand: Callable[[str], str | None]):
         super().__init__()
         self.config = Config()
         self.messageQueue = queue.Queue(0)
@@ -52,8 +52,10 @@ class NeuroApiServer(threading.Thread):
             record_srate=self.config.record_srate,
         )
         self.running = True
+        self.analyzerThread = AnalyzerServer(parseCommand, self)
 
     def run(self):
+        self.analyzerThread.start()
         self.analyzer.fit()
         self.clientSocket, _address = waitClient(self.clientServer, 5)
         self.clientSocket.settimeout(20000)

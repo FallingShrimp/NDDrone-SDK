@@ -4,7 +4,7 @@ import time
 
 from engine.api.behaviour.handler import store
 from engine.thread.SendMessageThread import SendMessageThread
-from engine.util.connection import checkConnection
+from engine.util.network import checkConnection
 from loggers import loggerBehaviour
 
 

@@ -1,14 +1,16 @@
-from analyzer.server import AnalyzerServer
+from analyzer.server import NeuroApiServer
 from analyzer.behaviour import init, action
+import threading
 
 init()
 
 
-class NeuroApiRunner:
-    def __init__(self) -> None:
-        self.server = AnalyzerServer(self.parseCommand)
+class NeuroApiRunner(threading.Thread):
+    def __init__(self):
+        super().__init__()
+        self.server = NeuroApiServer(self.parseCommand)
 
-    def start(self):
+    def run(self):
         self.server.start()
 
     def parseCommand(self, message: str) -> str | None:
