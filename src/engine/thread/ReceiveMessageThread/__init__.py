@@ -2,10 +2,15 @@ import socket
 import threading
 import time
 
-from engine.thread.ReceiveMessageThread.interpreter import run
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection
 from loggers import loggerBehaviour
+from analyzer.behaviour.parser import parseCommand
+
+
+def run(rawCommand: str, thread: "ReceiveMessageThread") -> str | None:
+    _main, args, base = parseCommand(rawCommand, "receiveMessage")
+    return base.handler(**(args | {"thread": thread}))
 
 
 class ReceiveMessageThread(threading.Thread):
@@ -35,6 +40,7 @@ class ReceiveMessageThread(threading.Thread):
                     if not data:
                         continue
                     message = data.decode("utf-8")
+                    loggerBehaviour.info(f"收到消息：{message}")
                     run(message, self)
             except OSError:
                 self.stop_event.set()
