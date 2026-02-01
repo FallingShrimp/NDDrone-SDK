@@ -1,6 +1,7 @@
 import os
 import time
 import warnings
+from engine.api.command.builder import buildCommand
 import state
 import keyboard
 import pyglet.gl.lib
@@ -60,7 +61,7 @@ class NDDroneFlymode:
         self.simulation.close()  # 关掉窗口
         self.messageReceiveThread.close()  # 先把接收线程关了，不然后面发STOP会报错
         if checkConnection(self.neuroApiSocket):
-            self.neuroApiSocket.send(b"STOP\n")  # 关掉NeuroAPI
+            self.neuroApiSocket.send(buildCommand("STOP", [], True))  # 关掉NeuroAPI
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
@@ -105,7 +106,9 @@ class NDDroneFlymode:
                     if checkConnection(self.neuroApiSocket):
                         # 给NeuroAPI发消息准备开始接收识别结果
                         currentTime = int(time.time() * 1000)
-                        self.neuroApiSocket.send(f"TIME:{currentTime}\n".encode("utf8"))
+                        self.neuroApiSocket.send(
+                            buildCommand("TIME", [currentTime], True)
+                        )
                     # 开始闪烁
                     self.simulation.flicker()
                 core.wait(0.01)

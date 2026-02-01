@@ -1,7 +1,7 @@
 __pycache__
 node_modules
 assets/frames/*
-blocks
+blocks/samples/*.png
 dist
 venv
 build

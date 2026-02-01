@@ -1,5 +1,7 @@
 from typing import Any, Callable, Literal, Type
 
+from engine.api.command.builder import buildCommand
+
 sendStore: dict[str, "BaseCommand"] = {}
 receiveStore: dict[str, "BaseCommand"] = {}
 
@@ -37,7 +39,11 @@ def command(*args: ArgumentSlot, type: ParserType):
     def decorator(func: CommandHandler):
         name = func.__name__
         getStore(type)[name] = BaseCommand(name, args, func)
-        return func
+
+        def wrapper(*args):
+            return buildCommand(name, list(args), type == "command")
+
+        return wrapper
 
     return decorator
 

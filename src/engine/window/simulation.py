@@ -4,6 +4,7 @@ from psychopy import visual
 from typing import cast
 from config import config
 from engine.window.components import ProgressBar
+from psychopy.visual.rect import Rect
 
 
 class SimulationWindow(visual.Window):
@@ -30,6 +31,9 @@ class SimulationWindow(visual.Window):
         @self.winHandle.event
         def on_show():
             self.minimized = False
+
+        on_hide()
+        on_show()
 
     def coverText(self, text: str, draw: bool):
         stim = visual.TextStim(
@@ -95,3 +99,21 @@ class SimulationWindow(visual.Window):
     def updateProgress(self, progress: float):
         self.progressBar.progress = progress
         self.progressBar.draw()
+
+    def rect(
+        self,
+        pos: tuple[float, float],
+        size: tuple[float, float],
+        line: str,
+        fill: str,
+    ):
+        stim = Rect(
+            self,
+            pos=pos,
+            size=size,
+            lineColor=line,
+            fillColor=fill,
+            colorSpace="rgba",
+        )
+        stim.draw()
+        self.flip()

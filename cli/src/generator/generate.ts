@@ -70,7 +70,7 @@ export async function frame(index: number, inputPath: string, outputPath: string
 }
 export async function generate(): Promise<void> {
     const config = await loadConfig();
-    const inputPath = "blocks";
+    const inputPath = "blocks/samples";
     const outputPath = "assets/frames";
     const totalCount = config.frames.count;
     const threadCount = Math.min(config.run.threads, totalCount);
