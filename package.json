@@ -29,6 +29,7 @@
         "ini": "^6.0.0",
         "jimp": "^1.6.0",
         "opentype.js": "^1.3.4",
-        "pureimage": "^0.4.18"
+        "pureimage": "^0.4.18",
+        "threads": "^1.7.0"
     }
 }

@@ -1,14 +1,17 @@
+import { expose } from "threads/worker";
 import * as fs from "fs";
 import * as path from "path";
 import * as PI from "pureimage";
-import { Pool, spawn, Worker } from "threads";
 import { blockSize, imageSize, subtitleSize } from "./constants";
 import { drawTextCenteredInBox } from "./drawtil";
 import { inputKeys, inputPosition, outputPosition, outputResultMap, outputTextMap, overwriteBlockSize } from "./position";
-import { loadConfig } from "../config";
-import { progressBar } from "../util";
 
-export async function process(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
+interface FrameTask {
+    index: number;
+    inputPath: string;
+    outputPath: string;
+}
+async function process(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
     const inputImage = await PI.decodePNGFromStream(fs.createReadStream(inputImagePath));
     const outputImage = PI.make(imageSize[0], imageSize[1]);
     const ctx = outputImage.getContext("2d");
@@ -62,52 +65,13 @@ export async function process(inputImagePath: string, text: boolean): Promise<PI
     }
     return outputImage;
 }
-export async function frame(index: number, inputPath: string, outputPath: string): Promise<void> {
-    const inputImagePath = path.join(inputPath, `${index}.png`);
-    const outputImagePath = path.join(outputPath, `${index}.png`);
-    const outputImage = await process(inputImagePath, false);
-    await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
-}
-export async function generate(): Promise<void> {
-    const config = await loadConfig();
-    const inputPath = "blocks";
-    const outputPath = "assets/frames";
-    const totalCount = config.frames.count;
-    const threadCount = Math.min(16, totalCount);
-    if (!fs.existsSync(outputPath)) {
-        fs.mkdirSync(outputPath, { recursive: true });
+const worker = {
+    async frameWorker(task: FrameTask): Promise<number> {
+        const inputImagePath = path.join(task.inputPath, `${task.index}.png`);
+        const outputImagePath = path.join(task.outputPath, `${task.index}.png`);
+        const outputImage = await process(inputImagePath, false);
+        await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
+        return task.index;
     }
-    const inputImagePath = path.join(inputPath, "display_frame.png");
-    const outputImagePath = path.join(outputPath, "display_frame.png");
-    const outputImage = await process(inputImagePath, true);
-    await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
-    const pool = Pool(() => spawn(new Worker("./worker")), threadCount);
-    try {
-        const tasks = [];
-        for (let i = 0; i < totalCount; i++) {
-            tasks.push(pool.queue(async (worker) => {
-                const result = await worker.frameWorker({
-                    index: i,
-                    inputPath,
-                    outputPath
-                });
-                return result;
-            }));
-        }
-        let finishedCount = 1;
-        const promises = tasks.map(async (task) => {
-            await task;
-            finishedCount++;
-            global.process.stdout.write(`已完成${finishedCount}/${totalCount + 1} ${progressBar(finishedCount / (totalCount + 1) * 100, 10)}\r`);
-        });
-        await Promise.all(promises);
-        console.log("\n所有帧已处理完成");
-    } finally {
-        await pool.terminate();
-    }
-}
-if (require.main === module) {
-    generate().catch(err => {
-        console.error("生成过程中出错:", err);
-    });
-}
+};
+expose(worker);
