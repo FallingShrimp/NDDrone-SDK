@@ -5,7 +5,7 @@ from engine.api.command.builder import buildCommand
 sendStore: dict[str, "BaseCommand"] = {}
 receiveStore: dict[str, "BaseCommand"] = {}
 
-CommandHandler = Callable[..., str | None]
+CommandHandler = Callable[..., bytes | str | None]
 ParserType = Literal["command"] | Literal["receiveMessage"]
 
 
@@ -35,7 +35,10 @@ def getStore(type: ParserType):
     return sendStore if type == "command" else receiveStore
 
 
-def command(*args: ArgumentSlot, type: ParserType):
+def command(
+    *args: ArgumentSlot,
+    type: ParserType,
+) -> Callable[[CommandHandler], Callable[..., bytes]]:
     def decorator(func: CommandHandler):
         name = func.__name__
         getStore(type)[name] = BaseCommand(name, args, func)

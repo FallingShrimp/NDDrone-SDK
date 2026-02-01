@@ -1,6 +1,6 @@
 from analyzer.behaviour.parser import ArgumentSlot, command
 from analyzer.server import NeuroApiServer
-from engine.api.command.builder import buildCommand
+from engine.thread.ReceiveMessageThread.interpreter import RSLT
 from engine.util.network import checkConnection
 import random
 
@@ -20,7 +20,7 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
             timestamp,
         )
         result = apiServer.analyzer.predict(epoch)[0]
-    return buildCommand("RSLT", [result])
+    return RSLT(result)
 
 
 def init():

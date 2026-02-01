@@ -1,6 +1,7 @@
 import os
 import time
 import warnings
+from analyzer.behaviour import TIME
 from engine.api.command.builder import buildCommand
 import state
 import keyboard
@@ -106,9 +107,7 @@ class NDDroneFlymode:
                     if checkConnection(self.neuroApiSocket):
                         # 给NeuroAPI发消息准备开始接收识别结果
                         currentTime = int(time.time() * 1000)
-                        self.neuroApiSocket.send(
-                            buildCommand("TIME", [currentTime], True)
-                        )
+                        self.neuroApiSocket.send(TIME(currentTime))
                     # 开始闪烁
                     self.simulation.flicker()
                 core.wait(0.01)
