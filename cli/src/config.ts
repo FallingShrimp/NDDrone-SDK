@@ -15,4 +15,7 @@ export interface ConfigData {
     frames: {
         count: number;
     };
+    run: {
+        logfile: string;
+    },
 }

@@ -56,6 +56,9 @@ pip install -r requirements.txt
 ```ini
 [frames]
 count=180 # 闪烁帧总量
+
+[run]
+logfile=log.txt # 日志文件名
 ```
 
 ### 运行
