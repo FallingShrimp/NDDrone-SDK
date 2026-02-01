@@ -1,10 +1,15 @@
 import os
+from typing import cast
+
 import pyglet.window.win32 as pyglet
 from psychopy import visual
-from typing import cast
-from config import config
-from engine.window.components import ProgressBar
 from psychopy.visual.rect import Rect
+
+from config import config
+from engine.api.parser.block import blockPosition, blockSize
+from engine.util.position import topLeftToCenter
+from engine.window.components import ProgressBar
+from loggers import loggerRenderer
 
 
 class SimulationWindow(visual.Window):
@@ -20,6 +25,7 @@ class SimulationWindow(visual.Window):
             screen=0,
             allowGUI=True,
         )
+        self.focus = -1
         self.progressBar = ProgressBar(self, (0, -100), (1000, 20))
         self.winHandle = cast(pyglet.Win32Window, self.winHandle)
         self.minimized = False
@@ -34,6 +40,22 @@ class SimulationWindow(visual.Window):
 
         on_hide()
         on_show()
+
+        def on_draw():
+            if self.focus >= 0 and config.metadata:
+                loggerRenderer.info(f"绘制聚焦框：{self.focus}")
+                self.prompt(False)
+                position = topLeftToCenter(
+                    blockPosition(self.focus),
+                    config.metadata["imageSize"],
+                )
+                size = blockSize(self.focus)
+                position[0] += size[0] // 2
+                position[1] -= size[1] // 2
+                self.rect((position[0], position[1]), size, "red", "#00000000")
+                self.focus = -1
+
+        self.winHandle.on_draw = on_draw
 
     def coverText(self, text: str, draw: bool):
         stim = visual.TextStim(
@@ -90,11 +112,15 @@ class SimulationWindow(visual.Window):
             self.backgroundStim.draw()
             flickerFrame.draw()
             self.flip()
-        self.prompt()
+        self.parsing()
 
-    def prompt(self):
+    def parsing(self):
+        self.coverText("正在解析用户意图...", True)
+
+    def prompt(self, flip: bool = True):
         self.promptStim.draw()
-        self.flip()
+        if flip:
+            self.flip()
 
     def updateProgress(self, progress: float):
         self.progressBar.progress = progress
@@ -112,6 +138,7 @@ class SimulationWindow(visual.Window):
             pos=pos,
             size=size,
             lineColor=line,
+            lineWidth=10,
             fillColor=fill,
             colorSpace="rgba",
         )

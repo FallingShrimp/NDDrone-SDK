@@ -8,7 +8,25 @@ import { inputKeys, inputPosition, outputPosition, outputResultMap, outputTextMa
 import { loadConfig } from "../config";
 import { progressBar } from "../util";
 
-export async function process(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
+export async function generateMetadatas() {
+    console.log("正在生成元数据");
+    fs.writeFileSync(
+        "./blocks/metadata.json",
+        JSON.stringify({
+            inputKeys,
+            inputPosition,
+            outputPosition,
+            outputResultMap,
+            outputTextMap,
+            overwriteBlockSize,
+            blockSize,
+            imageSize,
+            subtitleSize
+        }, null, 4)
+    );
+    console.log("生成完成");
+}
+export async function drawSingleFrame(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
     const inputImage = await PI.decodePNGFromStream(fs.createReadStream(inputImagePath));
     const outputImage = PI.make(imageSize[0], imageSize[1]);
     const ctx = outputImage.getContext("2d");
@@ -62,13 +80,13 @@ export async function process(inputImagePath: string, text: boolean): Promise<PI
     }
     return outputImage;
 }
-export async function frame(index: number, inputPath: string, outputPath: string): Promise<void> {
+export async function processSingleFrame(index: number, inputPath: string, outputPath: string): Promise<void> {
     const inputImagePath = path.join(inputPath, `${index}.png`);
     const outputImagePath = path.join(outputPath, `${index}.png`);
-    const outputImage = await process(inputImagePath, false);
+    const outputImage = await drawSingleFrame(inputImagePath, false);
     await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
 }
-export async function generate(): Promise<void> {
+export async function generateFrames(): Promise<void> {
     const config = await loadConfig();
     const inputPath = "blocks/samples";
     const outputPath = "assets/frames";
@@ -79,7 +97,7 @@ export async function generate(): Promise<void> {
     }
     const inputImagePath = path.join(inputPath, "display_frame.png");
     const outputImagePath = path.join(outputPath, "display_frame.png");
-    const outputImage = await process(inputImagePath, true);
+    const outputImage = await drawSingleFrame(inputImagePath, true);
     await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
     const pool = Pool(() => spawn(new Worker("./worker")), threadCount);
     try {
@@ -111,7 +129,7 @@ export async function generate(): Promise<void> {
     }
 }
 if (require.main === module) {
-    generate().catch(err => {
+    generateFrames().catch(err => {
         console.error("生成过程中出错:", err);
     });
 }

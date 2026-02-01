@@ -6,7 +6,7 @@ import packageData from "../../package.json";
 import { CommandServer } from "./servers/command";
 import { DroneStateServer } from "./servers/droneState";
 import { PingServer } from "./servers/ping";
-import { generate } from "./generator/generate";
+import { generateFrames, generateMetadatas } from "./generator/generate";
 
 async function main() {
     program
@@ -30,7 +30,10 @@ async function main() {
             }
         });
     program.command("generate")
-        .action(generate);
+        .action(async () => {
+            await generateFrames();
+            await generateMetadatas();
+        });
     program.command("command")
         .action(async () => {
             console.log("--- NDDrone-SDK 无人机交互终端 ---");

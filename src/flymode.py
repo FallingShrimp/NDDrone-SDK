@@ -1,21 +1,20 @@
 import os
 import time
 import warnings
-from analyzer.behaviour import TIME
-from engine.api.command.builder import buildCommand
-import state
+
 import keyboard
 import pyglet.gl.lib
-
 from psychopy import core, event, logging
 
+import state
+from analyzer.behaviour import STOP, TIME
+from config import config
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection, createClient
 from engine.util.workdir import fromAssets
 from engine.window.simulation import SimulationWindow
 from loggers import loggerMain
-from config import config
 
 logging.console.setLevel(logging.CRITICAL)
 warnings.filterwarnings("ignore")
@@ -23,6 +22,12 @@ warnings.filterwarnings("ignore")
 
 class NDDroneFlymode:
     def __init__(self):
+        if config.metadata is None:
+            loggerMain.error("未找到积木元数据！请先编译刺激块。")
+            return
+        # 初始化刺激块窗口
+        self.simulation = SimulationWindow(config.windowSize)
+        keyboard.add_hotkey("m", self.toggleSimulation)
         # 配置一些路径常量
         self.picturePath = fromAssets("frames")
         self.backgroundPath = fromAssets("background.jpg")
@@ -39,10 +44,8 @@ class NDDroneFlymode:
             self.neuroApiSocket,
             self.drone,
             50,
+            self.simulation,
         )
-        # 初始化闪烁窗口
-        self.simulation = SimulationWindow(config.windowSize)
-        keyboard.add_hotkey("m", self.toggleSimulation)
 
     def toggleSimulation(self):
         try:
@@ -62,7 +65,7 @@ class NDDroneFlymode:
         self.simulation.close()  # 关掉窗口
         self.messageReceiveThread.close()  # 先把接收线程关了，不然后面发STOP会报错
         if checkConnection(self.neuroApiSocket):
-            self.neuroApiSocket.send(buildCommand("STOP", [], True))  # 关掉NeuroAPI
+            self.neuroApiSocket.send(STOP())  # 关掉NeuroAPI
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
@@ -85,7 +88,7 @@ class NDDroneFlymode:
             self.simulation.loadFlickerFrames(self.picturePath)
             self.simulation.loadDynamicFrames(self.backgroundPath, self.promptPath)
         except OSError:
-            loggerMain.error("未找到帧文件！请先运行生成命令。")
+            loggerMain.error("未找到帧文件！请先编译刺激块。")
             self.quit()
         loggerMain.info("闪烁窗口已就绪！")
 
@@ -111,6 +114,7 @@ class NDDroneFlymode:
                     # 开始闪烁
                     self.simulation.flicker()
                 core.wait(0.01)
+                self.simulation.winHandle.on_draw()
             except Exception as e:
                 loggerMain.error(e)
                 self.stoploop()

@@ -26,3 +26,10 @@ def waitKeyboardError() -> None:
             pass
     except KeyboardInterrupt:
         pass
+
+
+def readKeyByValue(data: dict, value: Any):
+    for key, val in data.items():
+        if val == value:
+            return key
+    return None

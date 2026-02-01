@@ -24,7 +24,8 @@ class AnalyzerServer(threading.Thread):
         while self.apiServer.running:
             try:
                 if (
-                    checkConnection(self.apiServer.clientSocket)
+                    hasattr(self.apiServer, "clientSocket")
+                    and checkConnection(self.apiServer.clientSocket)
                     and self.apiServer.messageQueue.qsize() > 0
                 ):
                     message = self.apiServer.messageQueue.get()
