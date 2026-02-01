@@ -73,7 +73,7 @@ export async function generate(): Promise<void> {
     const inputPath = "blocks";
     const outputPath = "assets/frames";
     const totalCount = config.frames.count;
-    const threadCount = Math.min(16, totalCount);
+    const threadCount = Math.min(8, totalCount);
     if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath, { recursive: true });
     }
