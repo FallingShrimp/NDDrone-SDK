@@ -11,5 +11,5 @@ class NeuroApiRunner(threading.Thread):
     def run(self):
         self.server.start()
 
-    def parseCommand(self, message: str) -> str | None:
+    def parseCommand(self, message: str) -> bytes | str | None:
         return run(message, self.server)

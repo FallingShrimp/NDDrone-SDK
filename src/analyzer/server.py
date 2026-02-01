@@ -12,7 +12,9 @@ from engine.util.network import checkConnection, createServer, waitClient
 
 class AnalyzerServer(threading.Thread):
     def __init__(
-        self, parseCommand: Callable[[str], str | None], apiServer: "NeuroApiServer"
+        self,
+        parseCommand: Callable[[str], bytes | str | None],
+        apiServer: "NeuroApiServer",
     ) -> None:
         super().__init__()
         self.parseCommand = parseCommand
@@ -26,12 +28,15 @@ class AnalyzerServer(threading.Thread):
                     and self.apiServer.messageQueue.qsize() > 0
                 ):
                     message = self.apiServer.messageQueue.get()
-                    loggerNeuroApi.info(
-                        f"[white]处理消息: [bold]{message}[/bold][/white]"
-                    )
+                    loggerNeuroApi.info(f"处理消息: [bold]{message}[/bold]")
                     result = self.parseCommand(message)
                     if result:
-                        self.apiServer.clientSocket.send(result.encode("utf8"))
+                        if isinstance(result, str):
+                            result = result.encode("utf8")
+                        loggerNeuroApi.info(
+                            f"发送消息: [bold]{result.decode('utf8')}[/bold]"
+                        )
+                        self.apiServer.clientSocket.send(result)
                 time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)
@@ -39,7 +44,7 @@ class AnalyzerServer(threading.Thread):
 
 
 class NeuroApiServer(threading.Thread):
-    def __init__(self, parseCommand: Callable[[str], str | None]):
+    def __init__(self, parseCommand: Callable[[str], bytes | str | None]):
         super().__init__()
         self.config = Config()
         self.messageQueue = queue.Queue(0)

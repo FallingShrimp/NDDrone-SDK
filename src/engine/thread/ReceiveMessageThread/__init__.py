@@ -8,7 +8,7 @@ from loggers import loggerBehaviour
 from analyzer.behaviour.parser import parseCommand
 
 
-def run(rawCommand: str, thread: "ReceiveMessageThread") -> str | None:
+def run(rawCommand: str, thread: "ReceiveMessageThread") -> bytes | str | None:
     _main, args, base = parseCommand(rawCommand, "receiveMessage")
     return base.handler(**(args | {"thread": thread}))
 
