@@ -1,4 +1,4 @@
-import { top, bottom, left, right, center } from './anchor';
+import { top, bottom, left, right, center } from "./anchor";
 
 export const inputPosition: Record<string, [number, number]> = {
     "up": [630, 110],
@@ -11,9 +11,7 @@ export const inputPosition: Record<string, [number, number]> = {
     "land": [30, 750],
     "flip": [330, 430],
 };
-
 export const disableKeys = ["land", "flip"];
-
 export const outputPosition: Record<string, [number, number]> = {
     "up": [left(Math.floor(250 / 2)), center(0, 0, 250)[1]],
     "down": [right(Math.floor(250 / 2)), center(0, 0, 250)[1]],
@@ -25,7 +23,6 @@ export const outputPosition: Record<string, [number, number]> = {
     "land": [left(0), bottom(0)],
     "flip": [right(0), bottom(0)]
 };
-
 export const outputTextMap: Record<string, string> = {
     "up": "短上",
     "down": "短下",
@@ -37,7 +34,6 @@ export const outputTextMap: Record<string, string> = {
     "land": "",
     "flip": "",
 };
-
 export const outputResultMap: Record<string, number> = {
     "up": 1,
     "down": 3,
@@ -49,11 +45,9 @@ export const outputResultMap: Record<string, number> = {
     "land": 2,
     "flip": 8,
 };
-
 export const overwriteBlockSize: Record<string, number> = {
     "takeoff": 500,
     "up": 250,
     "down": 250,
 };
-
 export const inputKeys = Object.keys(inputPosition).filter(key => !disableKeys.includes(key));

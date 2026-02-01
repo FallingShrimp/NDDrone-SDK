@@ -1,7 +1,7 @@
-import * as PI from 'pureimage';
+import * as PI from "pureimage";
 import opentype from "opentype.js";
 
-const font = opentype.loadSync('C:/Windows/Fonts/Deng.ttf');
+const font = opentype.loadSync("C:/Windows/Fonts/Deng.ttf");
 
 export function drawTextCenteredInBox(
     img: PI.Bitmap,
@@ -10,24 +10,14 @@ export function drawTextCenteredInBox(
     fontSize: number,
     fill: [number, number, number, number]
 ): void {
-    const ctx = img.getContext('2d');
-
-    // 使用 opentype.js 获取文字路径
+    const ctx = img.getContext("2d");
     const path = font.getPath(text, 0, 0, fontSize);
     const bbox = path.getBoundingBox();
-
-    // 计算文字的宽度和高度
     const width = bbox.x2 - bbox.x1;
     const height = bbox.y2 - bbox.y1;
-
-    // 计算居中位置
     const x = rect[0] + (rect[2] - rect[0] - width) / 2 - bbox.x1;
     const y = rect[1] + (rect[3] - rect[1] - height) / 2 - bbox.y1;
-
-    // 设置填充颜色
     ctx.fillStyle = `rgba(${fill[0]}, ${fill[1]}, ${fill[2]}, ${fill[3] / 255})`;
-
-    // 使用 opentype.js 绘制文字
     const drawPath = font.getPath(text, x, y, fontSize);
-    drawPath.draw(ctx as any);
+    drawPath.draw(ctx as unknown as CanvasRenderingContext2D);
 }

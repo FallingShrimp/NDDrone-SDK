@@ -1,15 +1,15 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as PI from 'pureimage';
-import { blockSize, imageSize, subtitleSize } from './constants';
-import { drawTextCenteredInBox } from './drawtil';
-import { inputKeys, inputPosition, outputPosition, outputResultMap, outputTextMap, overwriteBlockSize } from './position';
-import { loadConfig } from '../config';
+import * as fs from "fs";
+import * as path from "path";
+import * as PI from "pureimage";
+import { blockSize, imageSize, subtitleSize } from "./constants";
+import { drawTextCenteredInBox } from "./drawtil";
+import { inputKeys, inputPosition, outputPosition, outputResultMap, outputTextMap, overwriteBlockSize } from "./position";
+import { loadConfig } from "../config";
 
 export async function process(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
     const inputImage = await PI.decodePNGFromStream(fs.createReadStream(inputImagePath));
     const outputImage = PI.make(imageSize[0], imageSize[1]);
-    const ctx = outputImage.getContext('2d');
+    const ctx = outputImage.getContext("2d");
     const colorMap: Record<string, number> = {};
     const crossLength = 10;
     const crossWidth = 3;
@@ -17,18 +17,17 @@ export async function process(inputImagePath: string, text: boolean): Promise<PI
     for (const key of inputKeys) {
         const realBlockSize = overwriteBlockSize[key] || blockSize;
         const [x, y] = inputPosition[key];
-        // PureImage 的 Bitmap 没有 getPixel 方法，这里使用默认颜色
         const pixel = inputImage.getPixelRGBA(x, y);
         colorMap[key] = pixel;
         const [outputX, outputY] = outputPosition[key];
-        ctx.fillStyle = `#${pixel.toString(16).padStart(8, '0')}`;
+        ctx.fillStyle = `#${pixel.toString(16).padStart(8, "0")}`;
         ctx.fillRect(outputX, outputY, realBlockSize, realBlockSize);
         if (useBorder) {
-            ctx.strokeStyle = 'rgba(255, 0, 0, 255)';
+            ctx.strokeStyle = "rgba(255, 0, 0, 255)";
             ctx.lineWidth = 1;
             ctx.strokeRect(outputX, outputY, realBlockSize, realBlockSize);
         }
-        ctx.strokeStyle = 'rgba(255, 0, 0, 255)';
+        ctx.strokeStyle = "rgba(255, 0, 0, 255)";
         ctx.lineWidth = crossWidth;
         ctx.beginPath();
         ctx.moveTo(outputX - crossLength + realBlockSize / 2, outputY + realBlockSize / 2);
@@ -61,45 +60,42 @@ export async function process(inputImagePath: string, text: boolean): Promise<PI
     }
     return outputImage;
 }
-
-export async function frame(index: number, inputPath: string, outputPath: string, totalCount: number, useBackground: boolean): Promise<void> {
+export async function frame(index: number, inputPath: string, outputPath: string): Promise<void> {
     const inputImagePath = path.join(inputPath, `${index}.png`);
     const outputImagePath = path.join(outputPath, `${index}.png`);
     const outputImage = await process(inputImagePath, false);
     await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
 }
-
 export async function generate(): Promise<void> {
     const config = await loadConfig();
-    const inputPath = 'blocks';
-    const outputPath = 'assets/frames';
+    const inputPath = "blocks";
+    const outputPath = "assets/frames";
     const useBackground = true;
     const totalCount = config.frames.count;
     if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath, { recursive: true });
     }
     if (useBackground) {
-        const inputImagePath = path.join(inputPath, 'display_frame.png');
-        const outputImagePath = path.join(outputPath, 'display_frame.png');
+        const inputImagePath = path.join(inputPath, "display_frame.png");
+        const outputImagePath = path.join(outputPath, "display_frame.png");
         const outputImage = await process(inputImagePath, true);
         await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
-        console.log('已完成背景帧');
+        console.log("已完成背景帧");
     }
     let finishedCount = 0;
     const promises = [];
     for (let i = 0; i < totalCount; i++) {
-        const promise = frame(i, inputPath, outputPath, totalCount, useBackground).then(() => {
+        const promise = frame(i, inputPath, outputPath).then(() => {
             finishedCount++;
             global.process.stdout.write(`已完成${finishedCount}/${totalCount + (useBackground ? 1 : 0)}\r`);
         });
         promises.push(promise);
     }
     await Promise.all(promises);
-    console.log('\n所有帧已处理完成');
+    console.log("\n所有帧已处理完成");
 }
-
 if (require.main === module) {
     generate().catch(err => {
-        console.error('生成过程中出错:', err);
+        console.error("生成过程中出错:", err);
     });
 }
