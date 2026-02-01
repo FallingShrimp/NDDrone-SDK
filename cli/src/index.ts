@@ -6,7 +6,7 @@ import packageData from "../../package.json";
 import { CommandServer } from "./servers/command";
 import { DroneStateServer } from "./servers/droneState";
 import { PingServer } from "./servers/ping";
-import { generateFrames } from "./generator/generate";
+import { generate } from "./generator/generate";
 
 async function main() {
     program
@@ -32,7 +32,7 @@ async function main() {
     program.command("generate")
         .action(async () => {
             try {
-                await generateFrames();
+                await generate();
                 console.log("刺激块编译完成");
             } catch {
                 console.error("刺激块编译失败");

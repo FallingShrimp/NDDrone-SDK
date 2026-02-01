@@ -1,11 +1,11 @@
-import { IMAGE_SIZE, BLOCK_SIZE } from "./constants";
+import { imageSize, blockSize } from './constants';
 
 export function top(distance: number): number {
     return distance;
 }
 
 export function bottom(distance: number): number {
-    return IMAGE_SIZE.height - BLOCK_SIZE - distance;
+    return imageSize[1] - blockSize - distance;
 }
 
 export function left(distance: number): number {
@@ -13,12 +13,12 @@ export function left(distance: number): number {
 }
 
 export function right(distance: number): number {
-    return IMAGE_SIZE.width - BLOCK_SIZE - distance;
+    return imageSize[0] - blockSize - distance;
 }
 
-export function center(offsetX: number, offsetY: number, blockSize: number = BLOCK_SIZE): [number, number] {
+export function center(offsetX: number, offsetY: number, blockSizeParam: number = blockSize): [number, number] {
     return [
-        IMAGE_SIZE.width / 2 - blockSize / 2 + offsetX,
-        IMAGE_SIZE.height / 2 - blockSize / 2 + offsetY,
+        Math.floor(imageSize[0] / 2) - Math.floor(blockSizeParam / 2) + offsetX,
+        Math.floor(imageSize[1] / 2) - Math.floor(blockSizeParam / 2) + offsetY,
     ];
 }

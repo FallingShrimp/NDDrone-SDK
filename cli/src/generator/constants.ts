@@ -1,4 +1,4 @@
-export const BLOCK_SIZE = 300;
-export const IMAGE_SIZE = { width: 1920, height: 1080 };
-export const CENTER_GAP = 30;
-export const SUBTITLE_SIZE = 100;
+export const blockSize = 300;
+export const imageSize = [1920, 1080];
+export const centerGap = 30;
+export const subtitleSize = 100;

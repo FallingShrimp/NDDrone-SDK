@@ -1,4 +1,4 @@
-import { top, bottom, left, right, center } from "./anchor";
+import { top, bottom, left, right, center } from './anchor';
 
 export const inputPosition: Record<string, [number, number]> = {
     "up": [630, 110],
@@ -15,15 +15,15 @@ export const inputPosition: Record<string, [number, number]> = {
 export const disableKeys = ["land", "flip"];
 
 export const outputPosition: Record<string, [number, number]> = {
-    "up": [left(250 / 2), center(0, 0, 250)[1]],
-    "down": [right(250 / 2), center(0, 0, 250)[1]],
+    "up": [left(Math.floor(250 / 2)), center(0, 0, 250)[1]],
+    "down": [right(Math.floor(250 / 2)), center(0, 0, 250)[1]],
     "left": [right(0), top(0)],
     "right": [right(0), bottom(0)],
     "forward": [left(0), top(0)],
     "back": [left(0), bottom(0)],
     "takeoff": center(0, 0, 500),
     "land": [left(0), bottom(0)],
-    "flip": [right(0), bottom(0)],
+    "flip": [right(0), bottom(0)]
 };
 
 export const outputTextMap: Record<string, string> = {

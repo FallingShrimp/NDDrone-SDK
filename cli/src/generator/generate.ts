@@ -1,228 +1,105 @@
-import fs from "fs/promises";
-import { Jimp } from "jimp";
-import type { BmFont } from "@jimp/plugin-print/dist/esm/types";
-import {
-    SANS_32_BLACK,
-    SANS_16_BLACK,
-} from "@jimp/plugin-print/src/fonts";
-import { loadConfig } from "../config";
-import { BLOCK_SIZE, IMAGE_SIZE, SUBTITLE_SIZE } from "./constants";
-import { drawTextCenteredInBox } from "./drawtil";
-import {
-    inputKeys,
-    inputPosition,
-    outputPosition,
-    outputResultMap,
-    outputTextMap,
-    overwriteBlockSize,
-} from "./position";
+import * as fs from 'fs';
+import * as path from 'path';
+import * as PI from 'pureimage';
+import { blockSize, imageSize, subtitleSize } from './constants';
+import { drawTextCenteredInBox } from './drawtil';
+import { inputKeys, inputPosition, outputPosition, outputResultMap, outputTextMap, overwriteBlockSize } from './position';
+import { loadConfig } from '../config';
 
-type JimpInstance = {
-    bitmap: { width: number; height: number };
-    setPixelColor: (color: number, x: number, y: number) => unknown;
-    getPixelColor: (x: number, y: number) => number;
-    print: (options: { font: BmFont; x: number; y: number; text: string | number }) => unknown;
-    write: (path: `${string}.${string}`) => Promise<void>;
-};
-
-const INPUT_PATH = "blocks";
-const OUTPUT_PATH = "assets/frames";
-const USE_BACKGROUND = true;
-const CROSS_LENGTH = 10;
-const CROSS_WIDTH = 3;
-const USE_BORDER = false;
-
-function rgbToHex(r: number, g: number, b: number, a: number = 255): number {
-    return (
-        ((r & 0xff) << 24) |
-        ((g & 0xff) << 16) |
-        ((b & 0xff) << 8) |
-        (a & 0xff)
-    );
-}
-
-function drawHorizontalLine(
-    image: JimpInstance,
-    x1: number,
-    y: number,
-    x2: number,
-    color: number,
-    width: number,
-): void {
-    for (let w = 0; w < width; w++) {
-        const currentY = y + w;
-        for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-            if (x >= 0 && x < image.bitmap.width && currentY >= 0 && currentY < image.bitmap.height) {
-                image.setPixelColor(color, x, currentY);
-            }
-        }
-    }
-}
-
-function drawVerticalLine(
-    image: JimpInstance,
-    x: number,
-    y1: number,
-    y2: number,
-    color: number,
-    width: number,
-): void {
-    for (let w = 0; w < width; w++) {
-        const currentX = x + w;
-        for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-            if (currentX >= 0 && currentX < image.bitmap.width && y >= 0 && y < image.bitmap.height) {
-                image.setPixelColor(color, currentX, y);
-            }
-        }
-    }
-}
-
-function drawRectangle(
-    image: JimpInstance,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    fillColor: number,
-    outlineColor: number,
-    outlineWidth: number,
-): void {
-    for (let py = 0; py < height; py++) {
-        for (let px = 0; px < width; px++) {
-            const drawX = x + px;
-            const drawY = y + py;
-            if (drawX >= 0 && drawX < image.bitmap.width && drawY >= 0 && drawY < image.bitmap.height) {
-                const isOutline =
-                    px < outlineWidth ||
-                    px >= width - outlineWidth ||
-                    py < outlineWidth ||
-                    py >= height - outlineWidth;
-                image.setPixelColor(isOutline ? outlineColor : fillColor, drawX, drawY);
-            }
-        }
-    }
-}
-
-function drawCross(
-    image: JimpInstance,
-    centerX: number,
-    centerY: number,
-    length: number,
-    color: number,
-    width: number,
-): void {
-    drawHorizontalLine(
-        image,
-        centerX - length,
-        centerY,
-        centerX + length,
-        color,
-        width,
-    );
-    drawVerticalLine(
-        image,
-        centerX,
-        centerY - length,
-        centerY + length,
-        color,
-        width,
-    );
-}
-
-async function loadFontFile(path: string): Promise<BmFont> {
-    const { loadBitmapFontData, processBitmapFont } = await import(
-        "@jimp/plugin-print/dist/esm/load-bitmap-font"
-    );
-    const data = await loadBitmapFontData(path);
-    return processBitmapFont(path, data);
-}
-
-async function processImage(inputImage: JimpInstance, text: boolean): Promise<JimpInstance> {
-    const outputImage = new Jimp({
-        width: IMAGE_SIZE.width,
-        height: IMAGE_SIZE.height,
-        color: 0x00000000,
-    });
-
+export async function process(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
+    const inputImage = await PI.decodePNGFromStream(fs.createReadStream(inputImagePath));
+    const outputImage = PI.make(imageSize[0], imageSize[1]);
+    const ctx = outputImage.getContext('2d');
     const colorMap: Record<string, number> = {};
-
+    const crossLength = 10;
+    const crossWidth = 3;
+    const useBorder = false;
     for (const key of inputKeys) {
-        const realBlockSize = overwriteBlockSize[key] ?? BLOCK_SIZE;
-        const [inputX, inputY] = inputPosition[key];
-        const color = inputImage.getPixelColor(inputX, inputY);
-        colorMap[key] = color;
-
+        const realBlockSize = overwriteBlockSize[key] || blockSize;
+        const [x, y] = inputPosition[key];
+        // PureImage 的 Bitmap 没有 getPixel 方法，这里使用默认颜色
+        const pixel = inputImage.getPixelRGBA(x, y);
+        colorMap[key] = pixel;
         const [outputX, outputY] = outputPosition[key];
-
-        drawRectangle(
-            outputImage,
-            outputX,
-            outputY,
-            realBlockSize,
-            realBlockSize,
-            color,
-            rgbToHex(255, 0, 0),
-            USE_BORDER ? 2 : 0,
-        );
-
-        drawCross(
-            outputImage,
-            outputX + realBlockSize / 2,
-            outputY + realBlockSize / 2,
-            CROSS_LENGTH,
-            rgbToHex(255, 0, 0),
-            CROSS_WIDTH,
-        );
+        ctx.fillStyle = `#${pixel.toString(16).padStart(8, '0')}`;
+        ctx.fillRect(outputX, outputY, realBlockSize, realBlockSize);
+        if (useBorder) {
+            ctx.strokeStyle = 'rgba(255, 0, 0, 255)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(outputX, outputY, realBlockSize, realBlockSize);
+        }
+        ctx.strokeStyle = 'rgba(255, 0, 0, 255)';
+        ctx.lineWidth = crossWidth;
+        ctx.beginPath();
+        ctx.moveTo(outputX - crossLength + realBlockSize / 2, outputY + realBlockSize / 2);
+        ctx.lineTo(outputX + crossLength + realBlockSize / 2, outputY + realBlockSize / 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(outputX + realBlockSize / 2, outputY - crossLength + realBlockSize / 2);
+        ctx.lineTo(outputX + realBlockSize / 2, outputY + crossLength + realBlockSize / 2);
+        ctx.stroke();
     }
-
     if (text) {
-        const font = await loadFontFile(SANS_32_BLACK);
-        const smallFont = await loadFontFile(SANS_16_BLACK);
-
         for (const key of inputKeys) {
-            const realBlockSize = overwriteBlockSize[key] ?? BLOCK_SIZE;
+            const realBlockSize = overwriteBlockSize[key] || blockSize;
             const [outputX, outputY] = outputPosition[key];
-
             drawTextCenteredInBox(
                 outputImage,
                 outputTextMap[key],
                 [outputX, outputY, outputX + realBlockSize, outputY + realBlockSize],
-                font,
+                50,
+                [0, 0, 0, 255]
             );
-
             drawTextCenteredInBox(
                 outputImage,
                 `T${outputResultMap[key]}:${key}`,
-                [outputX, outputY + SUBTITLE_SIZE, outputX + realBlockSize, outputY + realBlockSize],
-                smallFont,
+                [outputX, outputY + subtitleSize, outputX + realBlockSize, outputY + realBlockSize],
+                35,
+                [100, 100, 100, 255]
             );
         }
     }
-
     return outputImage;
 }
 
-export async function generateFrames(): Promise<void> {
+export async function frame(index: number, inputPath: string, outputPath: string, totalCount: number, useBackground: boolean): Promise<void> {
+    const inputImagePath = path.join(inputPath, `${index}.png`);
+    const outputImagePath = path.join(outputPath, `${index}.png`);
+    const outputImage = await process(inputImagePath, false);
+    await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
+}
+
+export async function generate(): Promise<void> {
     const config = await loadConfig();
+    const inputPath = 'blocks';
+    const outputPath = 'assets/frames';
+    const useBackground = true;
     const totalCount = config.frames.count;
-
-    await fs.mkdir(OUTPUT_PATH, { recursive: true });
-
+    if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath, { recursive: true });
+    }
+    if (useBackground) {
+        const inputImagePath = path.join(inputPath, 'display_frame.png');
+        const outputImagePath = path.join(outputPath, 'display_frame.png');
+        const outputImage = await process(inputImagePath, true);
+        await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
+        console.log('已完成背景帧');
+    }
     let finishedCount = 0;
-
-    if (USE_BACKGROUND) {
-        const displayFrame = await Jimp.read(`${INPUT_PATH}/display_frame.png`);
-        const processedFrame = await processImage(displayFrame, true);
-        await processedFrame.write(`${OUTPUT_PATH}/display_frame.png`);
-        finishedCount++;
-    }
-
+    const promises = [];
     for (let i = 0; i < totalCount; i++) {
-        const inputImage = await Jimp.read(`${INPUT_PATH}/${i}.png`);
-        const processedImage = await processImage(inputImage, false);
-        await processedImage.write(`${OUTPUT_PATH}/${i}.png`);
-        finishedCount++;
-        process.stdout.write(`\r已完成${finishedCount}/${totalCount + (USE_BACKGROUND ? 1 : 0)}`);
+        const promise = frame(i, inputPath, outputPath, totalCount, useBackground).then(() => {
+            finishedCount++;
+            global.process.stdout.write(`已完成${finishedCount}/${totalCount + (useBackground ? 1 : 0)}\r`);
+        });
+        promises.push(promise);
     }
-    console.log("");
+    await Promise.all(promises);
+    console.log('\n所有帧已处理完成');
+}
+
+if (require.main === module) {
+    generate().catch(err => {
+        console.error('生成过程中出错:', err);
+    });
 }
