@@ -9,6 +9,11 @@ export async function loadConfig(): Promise<ConfigData> {
         console.error("frames.count必须为数字");
         process.exit(1);
     }
+    result.run.threads = Number(result.run.threads);
+    if (isNaN(result.run.threads)) {
+        console.error("run.threads必须为数字");
+        process.exit(1);
+    }
     return result;
 }
 export interface ConfigData {
@@ -17,5 +22,6 @@ export interface ConfigData {
     };
     run: {
         logfile: string;
-    },
+        threads: number;
+    };
 }

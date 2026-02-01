@@ -73,7 +73,7 @@ export async function generate(): Promise<void> {
     const inputPath = "blocks";
     const outputPath = "assets/frames";
     const totalCount = config.frames.count;
-    const threadCount = Math.min(8, totalCount);
+    const threadCount = Math.min(config.run.threads, totalCount);
     if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath, { recursive: true });
     }
@@ -83,6 +83,8 @@ export async function generate(): Promise<void> {
     await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
     const pool = Pool(() => spawn(new Worker("./worker")), threadCount);
     try {
+        const startTime = Date.now();
+        console.log(`开始生成${threadCount}线程`);
         const tasks = [];
         for (let i = 0; i < totalCount; i++) {
             tasks.push(pool.queue(async (worker) => {
@@ -102,6 +104,8 @@ export async function generate(): Promise<void> {
         });
         await Promise.all(promises);
         console.log("\n所有帧已处理完成");
+        const endTime = Date.now();
+        console.log(`耗时${(endTime - startTime)}ms`);
     } finally {
         await pool.terminate();
     }
