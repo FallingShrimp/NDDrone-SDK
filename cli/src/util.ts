@@ -48,3 +48,11 @@ export async function detachable(executor: () => Promise<void> | void) {
         }
     }
 }
+export async function wait(mills: number) {
+    return new Promise(resolve => setTimeout(resolve, mills));
+}
+export function progressBar(percent: number, length: number) {
+    const progress = Math.floor((percent / 100) * length);
+    const bar = "=".repeat(progress) + " ".repeat(length - progress);
+    return `[${bar}] ${percent.toFixed(2)}%`;
+}

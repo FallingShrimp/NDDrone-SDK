@@ -30,14 +30,7 @@ async function main() {
             }
         });
     program.command("generate")
-        .action(async () => {
-            try {
-                await generate();
-                console.log("刺激块编译完成");
-            } catch {
-                console.error("刺激块编译失败");
-            }
-        });
+        .action(generate);
     program.command("command")
         .action(async () => {
             console.log("--- NDDrone-SDK 无人机交互终端 ---");

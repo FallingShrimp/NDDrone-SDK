@@ -5,6 +5,7 @@ import { blockSize, imageSize, subtitleSize } from "./constants";
 import { drawTextCenteredInBox } from "./drawtil";
 import { inputKeys, inputPosition, outputPosition, outputResultMap, outputTextMap, overwriteBlockSize } from "./position";
 import { loadConfig } from "../config";
+import { progressBar } from "../util";
 
 export async function process(inputImagePath: string, text: boolean): Promise<PI.Bitmap> {
     const inputImage = await PI.decodePNGFromStream(fs.createReadStream(inputImagePath));
@@ -70,28 +71,20 @@ export async function generate(): Promise<void> {
     const config = await loadConfig();
     const inputPath = "blocks";
     const outputPath = "assets/frames";
-    const useBackground = true;
     const totalCount = config.frames.count;
     if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath, { recursive: true });
     }
-    if (useBackground) {
-        const inputImagePath = path.join(inputPath, "display_frame.png");
-        const outputImagePath = path.join(outputPath, "display_frame.png");
-        const outputImage = await process(inputImagePath, true);
-        await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
-        console.log("已完成背景帧");
-    }
-    let finishedCount = 0;
-    const promises = [];
+    const inputImagePath = path.join(inputPath, "display_frame.png");
+    const outputImagePath = path.join(outputPath, "display_frame.png");
+    const outputImage = await process(inputImagePath, true);
+    await PI.encodePNGToStream(outputImage, fs.createWriteStream(outputImagePath));
+    let finishedCount = 1;
     for (let i = 0; i < totalCount; i++) {
-        const promise = frame(i, inputPath, outputPath).then(() => {
-            finishedCount++;
-            global.process.stdout.write(`已完成${finishedCount}/${totalCount + (useBackground ? 1 : 0)}\r`);
-        });
-        promises.push(promise);
+        await frame(i, inputPath, outputPath);
+        finishedCount++;
+        global.process.stdout.write(`已完成${finishedCount}/${totalCount + 1} ${progressBar(finishedCount / (totalCount + 1) * 100, 10)}\r`);
     }
-    await Promise.all(promises);
     console.log("\n所有帧已处理完成");
 }
 if (require.main === module) {
