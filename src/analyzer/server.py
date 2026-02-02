@@ -2,8 +2,8 @@ import queue
 import threading
 import time
 from typing import Callable
-import state
 
+import state
 from analyzer.spatialFilter import FBCCA
 from engine.core.configCore import Config
 from engine.thread.NDThread import NDThread, loggerNeuroApi
@@ -32,12 +32,11 @@ class AnalyzerServer(threading.Thread):
                     loggerNeuroApi.info(f"处理消息: [bold]{message}[/bold]")
                     result = self.parseCommand(message)
                     if result:
+                        if isinstance(result, bytes):
+                            result = result.decode("utf8")
+                        loggerNeuroApi.info(f"发送消息: [bold]{result}[/bold]")
                         if isinstance(result, str):
-                            result = result.encode("utf8")
-                        loggerNeuroApi.info(
-                            f"发送消息: [bold]{result.decode('utf8')}[/bold]"
-                        )
-                        self.apiServer.clientSocket.send(result)
+                            self.apiServer.clientSocket.send(result.encode("utf8"))
                 time.sleep(0.01)
             except Exception as e:
                 loggerNeuroApi.error(e)
