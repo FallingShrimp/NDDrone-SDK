@@ -9,7 +9,9 @@ class DroneActionBase(BaseModel):
         super().__init__(command=command, args=args)
 
     def __str__(self) -> str:
-        return f"{self.command} {' '.join(map(str, self.args))}".strip()
+        return (
+            f"{self.command} {' '.join([str(round(arg)) for arg in self.args])}".strip()
+        )
 
 
 class Forward(DroneActionBase):
