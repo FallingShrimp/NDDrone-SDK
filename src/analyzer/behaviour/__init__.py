@@ -1,7 +1,5 @@
 import random
 
-from psychopy import event
-
 from analyzer.behaviour.parser import ArgumentSlot, command
 from analyzer.server import NeuroApiServer
 from engine.thread.ReceiveMessageThread.interpreter import RSLT
@@ -15,7 +13,7 @@ def STOP(apiServer: NeuroApiServer):
 
 
 @command(ArgumentSlot("timestamp", int), ArgumentSlot("useKey", bool), type="command")
-def TIME(timestamp: int, useKey: bool, apiServer: NeuroApiServer):
+def TIME(timestamp: int, apiServer: NeuroApiServer):
     result = -1
     if checkConnection(apiServer.deviceThread.sock):
         epoch = apiServer.deviceThread.readFixedData(
@@ -23,12 +21,6 @@ def TIME(timestamp: int, useKey: bool, apiServer: NeuroApiServer):
             timestamp,
         )
         result = apiServer.analyzer.predict(epoch)[0]
-    elif useKey:
-        keys: list[str] = event.getKeys(keyList=list(range(9)))
-        for key in keys:
-            if key.isdigit():
-                result = int(key)
-                break
     else:
         result = random.randint(0, 8)
     return RSLT(result)
