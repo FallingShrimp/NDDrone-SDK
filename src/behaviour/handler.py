@@ -5,3 +5,7 @@ from engine.api.behaviour.handler import command
 @command(0)
 def command_0():
     return Forward(1.0)
+
+
+def init():
+    pass

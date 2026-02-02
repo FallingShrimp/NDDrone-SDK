@@ -52,7 +52,8 @@ class SimulationWindow(visual.Window):
                 size = blockSize(self.focus)
                 position[0] += size[0] // 2
                 position[1] -= size[1] // 2
-                self.rect((position[0], position[1]), size, "red", "#00000000")
+                self.rect((position[0], position[1]), size, "red", 0.5)
+                self.flip()
                 self.focus = -1
 
         self.winHandle.on_draw = on_draw
@@ -130,17 +131,16 @@ class SimulationWindow(visual.Window):
         self,
         pos: tuple[float, float],
         size: tuple[float, float],
-        line: str,
         fill: str,
+        opacity: float,
     ):
         stim = Rect(
             self,
             pos=pos,
             size=size,
-            lineColor=line,
-            lineWidth=10,
+            lineWidth=0,
             fillColor=fill,
             colorSpace="rgba",
+            opacity=opacity,
         )
         stim.draw()
-        self.flip()
