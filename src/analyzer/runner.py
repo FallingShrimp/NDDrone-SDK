@@ -1,7 +1,7 @@
 import threading
 
 from analyzer.behaviour.runtime import run
-from analyzer.server import NeuroApiServer
+from server import NeuroApiServer
 
 
 class NeuroApiRunner(threading.Thread):

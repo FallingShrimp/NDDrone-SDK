@@ -1,5 +1,5 @@
 from analyzer.behaviour.parser import parseCommand
-from analyzer.server import NeuroApiServer
+from server import NeuroApiServer
 
 
 def run(rawCommand: str, apiServer: NeuroApiServer) -> bytes | str | None:
