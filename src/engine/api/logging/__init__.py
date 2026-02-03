@@ -51,13 +51,20 @@ class Logger:
     def toRaw(self) -> list[dict]:
         return [record.model_dump() for record in self.records]
 
+    def modulePath(self) -> str:
+        return (
+            self.moduleName
+            if self.parent is None
+            else f"{self.parent.modulePath()}.{self.moduleName}"
+        )
+
     def export(self, to: str):
         self.info(f"正在导出日志到{to}...")
         with open(to, "w", encoding="utf8") as f:
             json.dump(self.toRaw(), f, ensure_ascii=False, indent=4)
 
     def log(self, type: MessageType, message: str):
-        record = LogRecord(type, message, self.moduleName)
+        record = LogRecord(type, message, self.modulePath())
         self.records.append(record)
         if self.parent:
             self.parent.records.append(record)

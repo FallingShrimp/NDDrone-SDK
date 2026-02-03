@@ -12,7 +12,7 @@ def STOP(apiServer: NeuroApiServer):
     apiServer.quit()
 
 
-@command(ArgumentSlot("timestamp", int), ArgumentSlot("useKey", bool), type="command")
+@command(ArgumentSlot("timestamp", int), type="command")
 def TIME(timestamp: int, apiServer: NeuroApiServer):
     result = -1
     if checkConnection(apiServer.deviceThread.sock):
