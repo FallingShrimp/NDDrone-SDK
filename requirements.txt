@@ -1,6 +1,7 @@
 psychopy
 pillow
 scikit-learn
+torch
 rich
 pydantic
 pyinstaller
