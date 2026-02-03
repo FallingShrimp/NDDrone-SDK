@@ -2,7 +2,7 @@ import random
 
 from analyzer.behaviour.parser import ArgumentSlot, command
 from engine.util.network import checkConnection
-from server import NeuroApiServer
+from neuroApi import NeuroApiServer
 
 
 @command(type="command")
