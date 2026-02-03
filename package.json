@@ -9,7 +9,8 @@
         "build": "tsc",
         "dev": "tsc --watch",
         "start": "node ./cli/dist/cli/src/index.js",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
+        "postinstall": "pip install -r requirements.txt"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",
