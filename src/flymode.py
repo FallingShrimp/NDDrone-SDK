@@ -6,15 +6,15 @@ import keyboard
 import pyglet.gl.lib
 from psychopy import core, event, logging
 
-import state
 from analyzer.behaviour import STOP, TIME
-from config import config
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection, createClient
 from engine.util.workdir import fromAssets
 from engine.window.simulation import SimulationWindow
-from loggers import loggerMain
+from instances import state
+from instances.config import config
+from instances.loggers import loggerMain
 
 logging.console.setLevel(logging.CRITICAL)
 warnings.filterwarnings("ignore")

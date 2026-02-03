@@ -2,11 +2,11 @@ import socket
 import threading
 import time
 
+from analyzer.behaviour.parser import parseCommand
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection
 from engine.window.simulation import SimulationWindow
-from loggers import loggerBehaviour
-from analyzer.behaviour.parser import parseCommand
+from instances.loggers import loggerBehaviour
 
 
 def run(

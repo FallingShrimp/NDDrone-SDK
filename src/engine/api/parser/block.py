@@ -1,5 +1,5 @@
-from config import config
 from engine.util.original import readKeyByValue
+from instances.config import config
 
 
 def blockPosition(resultIndex: int) -> tuple[int, int]:

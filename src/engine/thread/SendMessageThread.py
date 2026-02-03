@@ -6,7 +6,7 @@ from typing import Callable
 
 from psychopy import core
 
-from loggers import loggerDrone
+from instances.loggers import loggerDrone
 
 
 class SendMessageThread(Thread):

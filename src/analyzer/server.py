@@ -3,11 +3,12 @@ import threading
 import time
 from typing import Callable
 
-import state
 from analyzer.spatialFilter import FBCCA
 from engine.core.configCore import Config
-from engine.thread.NDThread import NDThread, loggerNeuroApi
+from engine.thread.NDThread import NDThread
 from engine.util.network import checkConnection, createServer, waitClient
+from instances import state
+from instances.loggers import loggerNeuroApi
 
 
 class AnalyzerServer(threading.Thread):

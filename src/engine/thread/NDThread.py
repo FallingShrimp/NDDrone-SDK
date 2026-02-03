@@ -6,7 +6,7 @@ from scipy.signal import resample
 
 from engine.core.wheelCore import Decoder
 from engine.util.network import checkConnection, createClient
-from loggers import loggerNeuroApi
+from instances.loggers import loggerNeuroApi
 
 
 class NDThread(threading.Thread):

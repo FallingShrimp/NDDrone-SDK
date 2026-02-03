@@ -1,6 +1,7 @@
 from psychopy import core
-from config import config
-from loggers import totalLogger
+
+from instances.config import config
+from instances.loggers import totalLogger
 
 flymode = True
 neuroapi = True

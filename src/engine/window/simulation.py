@@ -5,11 +5,11 @@ import pyglet.window.win32 as pyglet
 from psychopy import visual
 from psychopy.visual.rect import Rect
 
-from config import config
 from engine.api.parser.block import blockPosition, blockSize
 from engine.util.position import topLeftToCenter
 from engine.window.components import ProgressBar
-from loggers import loggerRenderer
+from instances.config import config
+from instances.loggers import loggerRenderer
 
 
 class SimulationWindow(visual.Window):
