@@ -1,5 +1,5 @@
 import { program } from "commander";
-import { detachable, input } from "./util";
+import { detachable, input, safeExecute } from "./util";
 import process from "process";
 import childProcess from "child_process";
 import packageData from "../../package.json";
@@ -13,22 +13,8 @@ async function main() {
         .name(packageData.name)
         .version(packageData.version)
         .description(packageData.description);
-    program.command("build")
-        .action(() => {
-            try {
-                childProcess.execSync("pyinstaller index.spec", { stdio: "inherit" });
-            } catch {
-                console.log("");
-            }
-        });
     program.command("start")
-        .action(() => {
-            try {
-                childProcess.execSync("python ./src/app.py", { stdio: "inherit" });
-            } catch {
-                console.log("");
-            }
-        });
+        .action(() => safeExecute("python ./src/main.py"));
     program.command("generate")
         .action(async () => {
             await generateFrames();

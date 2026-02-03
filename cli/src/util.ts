@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs/promises";
 import readline from "readline/promises";
+import childProcess from "child_process";
 
 export async function copyDirectory(src: string, dest: string, mapFile?: (srcPath: string, destPath: string) => string) {
     const entries = await fs.readdir(src, { withFileTypes: true });
@@ -55,4 +56,11 @@ export function progressBar(percent: number, length: number) {
     const progress = Math.floor((percent / 100) * length);
     const bar = "=".repeat(progress) + " ".repeat(length - progress);
     return `[${bar}] ${percent.toFixed(2)}%`;
+}
+export function safeExecute(command: string) {
+    try {
+        childProcess.execSync(command, { stdio: "inherit" });
+    } catch {
+        console.log("");
+    }
 }
