@@ -8,8 +8,8 @@
     "scripts": {
         "build": "tsc",
         "dev": "tsc --watch",
-        "start": "node ./cli/dist/cli/src/index.js",
-        "lint": "eslint . --fix",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
         "postinstall": "pip install -r requirements.txt"
     },
     "devDependencies": {
