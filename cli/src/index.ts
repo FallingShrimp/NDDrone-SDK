@@ -13,8 +13,12 @@ async function main() {
         .name(packageData.name)
         .version(packageData.version)
         .description(packageData.description);
-    program.command("start")
+    const startCommand = program.command("start")
         .action(() => safeExecute("python ./src/main.py"));
+    startCommand.command("neuroapi")
+        .action(() => safeExecute("python ./src/entry/neuroApi.py"));
+    startCommand.command("flymode")
+        .action(() => safeExecute("python ./src/entry/flymode.py"));
     program.command("generate")
         .action(async () => {
             await generateFrames();
