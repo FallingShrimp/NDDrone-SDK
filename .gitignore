@@ -1,6 +1,5 @@
 __pycache__
 node_modules
-assets/frames/*
 assets/metadata.json
 blocks/samples/*.png
 dist
