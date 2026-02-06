@@ -1,6 +1,7 @@
 import json
-import numpy as np
 from configparser import ConfigParser
+
+import numpy as np
 
 
 class Config:
@@ -52,6 +53,6 @@ class Config:
 
     def metadataINFO(self):
         try:
-            self.metadata = json.load(open("blocks/metadata.json", encoding="utf8"))
+            self.metadata = json.load(open("assets/metadata.json", encoding="utf8"))
         except Exception:
             self.metadata = None

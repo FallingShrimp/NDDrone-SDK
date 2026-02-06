@@ -1,9 +1,10 @@
 __pycache__
 node_modules
 assets/frames/*
+assets/metadata.json
 blocks/samples/*.png
-blocks/metadata.json
 dist
 venv
 build
 log.json
+*.zip
