@@ -14,7 +14,7 @@ async function main() {
         .version(packageData.version)
         .description(packageData.description);
     const startCommand = program.command("start")
-        .action(() => safeExecute("python ./src/main.py"));
+        .action(() => safeExecute("python ./src/index.py"));
     startCommand.command("neuroapi")
         .action(() => safeExecute("python ./src/entry/neuroApi.py"));
     startCommand.command("flymode")

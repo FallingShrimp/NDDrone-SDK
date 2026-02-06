@@ -11,7 +11,7 @@ import { progressBar } from "../util";
 export async function generateMetadatas() {
     console.log("正在生成元数据");
     fs.writeFileSync(
-        "./blocks/metadata.json",
+        "./assets/metadata.json",
         JSON.stringify({
             inputKeys,
             inputPosition,
