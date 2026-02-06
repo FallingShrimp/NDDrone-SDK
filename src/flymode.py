@@ -23,8 +23,7 @@ warnings.filterwarnings("ignore")
 class NDDroneFlymode:
     def __init__(self):
         if config.metadata is None:
-            loggerMain.error("未找到积木元数据！请先编译刺激块。")
-            return
+            raise Exception("未找到积木元数据！请先编译刺激块。")
         # 初始化刺激块窗口
         self.simulation = SimulationWindow(config.windowSize)
         keyboard.add_hotkey("m", self.toggleSimulation)
