@@ -3,6 +3,7 @@ from datetime import datetime
 
 from analyzer.behaviour.parser import ArgumentSlot, command
 from engine.util.network import checkConnection
+from instances.loggers import loggerNeuroApi
 from neuroApi import NeuroApiServer
 
 
@@ -27,6 +28,7 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
         )
         result = apiServer.analyzer.predict(epoch)[0]
     else:
+        loggerNeuroApi.warning("未连接ND8，采用随机数。")
         result = random.randint(0, 8)
     return RSLT(result)
 
