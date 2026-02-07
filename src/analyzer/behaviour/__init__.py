@@ -21,6 +21,7 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
             apiServer.config.winLEN + apiServer.config.lag,
             timestamp,
         )
+        open(f"epoch/{timestamp}.txt", encoding="utf8").write(str(epoch))
         result = apiServer.analyzer.predict(epoch)[0]
     else:
         result = random.randint(0, 8)
