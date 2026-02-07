@@ -1,9 +1,9 @@
 import { BaseDroneServer, Oncable } from "../connection";
-import { DRONE_ADDRESS } from "../constants";
+import { DRONE_ADDRESS, SEND_COMMAND_SERVER_ADDRESS } from "../constants";
 
 export class PingServer extends BaseDroneServer implements Oncable {
     constructor() {
-        super("udp4", DRONE_ADDRESS);
+        super("udp4", DRONE_ADDRESS, SEND_COMMAND_SERVER_ADDRESS);
     }
     receive(): void { }
     async doOnce(): Promise<void> {

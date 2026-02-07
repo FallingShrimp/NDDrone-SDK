@@ -20,6 +20,7 @@ class SendMessageThread(Thread):
         self._roboAddress = roboAddress
         self._is_running = True
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock.bind(("0.0.0.0", 1145))
         self.recb = lambda x: None
 
     def run(self):

@@ -4,7 +4,7 @@ from engine.api.behaviour.handler import command
 
 @command(0)
 def command_0():
-    return Forward(100)
+    return Forward(50)
 
 
 def init():

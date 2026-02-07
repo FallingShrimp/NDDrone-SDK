@@ -23,10 +23,10 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
             apiServer.config.winLEN + apiServer.config.lag,
             timestamp,
         )
-        open(f"epoch/{datetime.fromtimestamp(timestamp).isoformat()}.txt", "wb").write(
-            bytes(epoch)
-        )
-        result = apiServer.analyzer.predict(epoch)[0]
+        if epoch is not None:
+            data = epoch.tobytes()
+            open(f"epoch/{timestamp}.txt", "wb").write(data)
+            result = apiServer.analyzer.predict(epoch)[0]
     else:
         loggerNeuroApi.warning("未连接ND8，采用随机数。")
         result = random.randint(0, 8)

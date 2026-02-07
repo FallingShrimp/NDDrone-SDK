@@ -55,7 +55,7 @@ export class DroneStateServer extends BaseDroneServer implements Initializable {
     }
     receive(message: string): void {
         const state: Record<string, number | number[]> = {};
-        for (const pair in message.trim().split(";").filter(Boolean)) {
+        for (const pair of message.trim().split(";").filter(Boolean)) {
             const [key, value] = pair.split(":");
             if (vectorArrayKeys.includes(key)) {
                 state[key] = value.split(",").map(Number);
@@ -66,7 +66,9 @@ export class DroneStateServer extends BaseDroneServer implements Initializable {
         this.current = state as unknown as DroneState;
     }
     toString() {
-        return Object.entries(this.current ?? {}).map(([key, value]: [string, number]) => `${keyMap[key]}：${value}`).join(",\n");
+        return Object.entries(this.current ?? {}).map(([key, value], i) => {
+            return `${keyMap[key]}：${value}`;
+        }).join(",\n");
     }
     async initialize(): Promise<void> {
         await this.polling((stop) => {

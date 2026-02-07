@@ -6,3 +6,4 @@ rich
 pydantic
 pyinstaller
 keyboard
+pyglet

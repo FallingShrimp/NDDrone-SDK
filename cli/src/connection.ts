@@ -44,6 +44,9 @@ export abstract class BaseDroneServer {
             });
         });
     }
+    stop() {
+        this.peer.close();
+    }
     async waitMessage(timeout: number): Promise<string> {
         return new Promise((resolve, reject) => {
             let timeouted = false;

@@ -50,6 +50,7 @@ async function main() {
             do {
                 console.log(droneState.toString());
             } while (options.watch);
+            droneState.stop();
         });
 
     program.parse(process.argv);
