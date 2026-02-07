@@ -2,7 +2,7 @@ __pycache__
 node_modules
 assets/metadata.json
 blocks/samples/*.png
-epoch/*.txt
+epoch/*.bytes
 dist
 venv
 build

@@ -113,6 +113,8 @@ class NDDroneFlymode:
                         self.neuroApiSocket.send(TIME(currentTime))
                     # 开始闪烁
                     self.simulation.flicker()
+                time.sleep(0.01)
+                self.simulation.winHandle.on_draw()
             except Exception as e:
                 loggerMain.error(e)
                 self.stoploop()
