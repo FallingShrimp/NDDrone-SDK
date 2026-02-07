@@ -8,7 +8,7 @@ export class PingServer extends BaseDroneServer implements Oncable {
     receive(): void { }
     async doOnce(): Promise<void> {
         try {
-            await this.send("command");
+            this.send("command");
             if (await this.waitMessage(5000) !== "ok") {
                 throw new Error("响应无效");
             }

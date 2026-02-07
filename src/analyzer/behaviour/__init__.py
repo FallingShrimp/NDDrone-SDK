@@ -24,7 +24,7 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
         )
         if epoch is not None:
             data = epoch.tobytes()
-            open(f"epoch/{timestamp}.txt", "wb").write(data)
+            open(f"epoch/{timestamp}.bytes", "wb").write(data)
             result = apiServer.analyzer.predict(epoch)[0]
     else:
         loggerNeuroApi.warning("未连接ND8，采用随机数。")
