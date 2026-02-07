@@ -1,7 +1,6 @@
 import { program } from "commander";
 import { detachable, input, safeExecute } from "./util";
 import process from "process";
-import childProcess from "child_process";
 import packageData from "../../package.json";
 import { CommandServer } from "./servers/command";
 import { DroneStateServer } from "./servers/droneState";
@@ -16,9 +15,9 @@ async function main() {
     const startCommand = program.command("start")
         .action(() => safeExecute("python ./src/index.py"));
     startCommand.command("neuroapi")
-        .action(() => safeExecute("python ./src/entry/neuroApi.py"));
+        .action(() => safeExecute("python ./src/index.py neuroapi"));
     startCommand.command("flymode")
-        .action(() => safeExecute("python ./src/entry/flymode.py"));
+        .action(() => safeExecute("python ./src/index.py flymode"));
     program.command("generate")
         .action(async () => {
             await generateFrames();

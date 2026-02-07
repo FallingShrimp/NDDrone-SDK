@@ -66,7 +66,7 @@ export class DroneStateServer extends BaseDroneServer implements Initializable {
         this.current = state as unknown as DroneState;
     }
     toString() {
-        return Object.entries(this.current ?? {}).map(([key, value], i) => {
+        return Object.entries(this.current ?? {}).map(([key, value]) => {
             return `${keyMap[key]}：${value}`;
         }).join(",\n");
     }
