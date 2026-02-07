@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 from analyzer.behaviour.parser import ArgumentSlot, command
 from engine.util.network import checkConnection
@@ -21,7 +22,9 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
             apiServer.config.winLEN + apiServer.config.lag,
             timestamp,
         )
-        open(f"epoch/{timestamp}.txt", encoding="utf8").write(str(epoch))
+        open(f"epoch/{datetime.fromtimestamp(timestamp).isoformat()}.txt", "wb").write(
+            bytes(epoch)
+        )
         result = apiServer.analyzer.predict(epoch)[0]
     else:
         result = random.randint(0, 8)
