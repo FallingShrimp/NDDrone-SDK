@@ -49,7 +49,7 @@ class ReceiveMessageThread(threading.Thread):
                     run(message, self, self.simulationWindow)
             except OSError:
                 self.stopEvent.set()
-            time.sleep(0.01)
+            time.sleep(0.1)
         loggerBehaviour.warning("已断开连接。")
 
     def close(self):

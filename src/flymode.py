@@ -4,7 +4,7 @@ import warnings
 
 import keyboard
 import pyglet.gl.lib
-from psychopy import core, event, logging
+from psychopy import event, logging
 
 from analyzer.behaviour import STOP, TIME
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
@@ -76,6 +76,7 @@ class NDDroneFlymode:
         self.running = False
 
     def init(self):
+        # self.simulation.winHandle.minimize()
         loggerMain.info("NDDrone-flymode 正在初始化...")
         loggerMain.info("正在启动无人机...")
         self.drone.start()
@@ -112,8 +113,6 @@ class NDDroneFlymode:
                         self.neuroApiSocket.send(TIME(currentTime))
                     # 开始闪烁
                     self.simulation.flicker()
-                core.wait(0.01)
-                self.simulation.winHandle.on_draw()
             except Exception as e:
                 loggerMain.error(e)
                 self.stoploop()

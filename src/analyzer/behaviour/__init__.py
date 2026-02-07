@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 
 from analyzer.behaviour.parser import ArgumentSlot, command
 from engine.util.network import checkConnection

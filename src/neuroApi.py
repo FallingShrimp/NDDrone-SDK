@@ -81,7 +81,7 @@ class NeuroApiServer(threading.Thread):
                             f"[white]收到消息: [bold]{message}[/bold][/white]"
                         )
                         self.messageQueue.put(message)
-                time.sleep(0.01)
+                time.sleep(0.1)
             except Exception as e:
                 loggerNeuroApi.error(e)
         self.running = False

@@ -1,4 +1,5 @@
 import threading
+import time
 
 import numpy as np
 from scipy import signal
@@ -62,6 +63,7 @@ class NDThread(threading.Thread):
                 self.eeg_datas.append(res)
                 if len(self.eeg_datas) > self.list_length:
                     self.eeg_datas.pop(0)
+            time.sleep(0.1)
 
     def readFixedData(self, length, stimulationTime):
         self.downRatio = int(self.srate * length)
