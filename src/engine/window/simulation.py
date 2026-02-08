@@ -108,7 +108,7 @@ class SimulationWindow(visual.Window):
         self.backgroundStim = self.coverImage(backgroundPath, False)
         self.promptStim = self.coverImage(promptPath, False)
 
-    def flicker(self):
+    def simulate(self):
         for flickerFrame in self.flickerFrames:
             self.backgroundStim.draw()
             flickerFrame.draw()

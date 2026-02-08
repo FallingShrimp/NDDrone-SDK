@@ -112,7 +112,7 @@ class NDDroneFlymode:
                         currentTime = int(time.time() * 1000)
                         self.neuroApiSocket.send(TIME(currentTime))
                     # 开始闪烁
-                    self.simulation.flicker()
+                    self.simulation.simulate()
                 time.sleep(0.01)
                 self.simulation.winHandle.on_draw()
             except Exception as e:
