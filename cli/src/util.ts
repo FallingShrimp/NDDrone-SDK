@@ -17,7 +17,7 @@ export async function copyDirectory(src: string, dest: string, mapFile?: (srcPat
         }
     }
 }
-export async function isExist(path: string) {
+export async function isExists(path: string) {
     try {
         await fs.access(path);
         return true;
@@ -57,10 +57,14 @@ export function progressBar(percent: number, length: number) {
     const bar = "=".repeat(progress) + " ".repeat(length - progress);
     return `[${bar}] ${percent.toFixed(2)}%`;
 }
-export function safeExecute(command: string) {
-    try {
-        childProcess.execSync(command, { stdio: "inherit" });
-    } catch {
-        console.log("");
-    }
+export async function safeExecute(command: string) {
+    return new Promise<number>((resolve, reject) => {
+        try {
+            const child = childProcess.spawn(command, { stdio: "inherit", shell: true });
+            child.addListener("exit", resolve);
+            child.addListener("error", reject)
+        } catch {
+            console.log("");
+        }
+    });
 }

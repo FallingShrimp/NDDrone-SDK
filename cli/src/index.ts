@@ -13,11 +13,14 @@ async function main() {
         .version(packageData.version)
         .description(packageData.description);
     const startCommand = program.command("start")
-        .action(() => safeExecute("python ./src/index.py"));
+        .action(async () => {
+            program.parse(["start", "neuroapi"], { from: "user" });
+            program.parse(["start", "flymode"], { from: "user" });
+        });
     startCommand.command("neuroapi")
-        .action(() => safeExecute("python ./src/index.py neuroapi"));
+        .action(async () => { await safeExecute("python ./src/index.py neuroapi") });
     startCommand.command("flymode")
-        .action(() => safeExecute("python ./src/index.py flymode"));
+        .action(async () => { await safeExecute("python ./src/index.py flymode") });
     program.command("generate")
         .action(async () => {
             await generateFrames();
