@@ -24,6 +24,7 @@ class SimulationWindow(visual.Window):
             colorSpace="rgb255",
             screen=0,
             allowGUI=True,
+            useFBO=False,
         )
         self.focus = -1
         self.progressBar = ProgressBar(self, (0, -100), (1000, 20))
