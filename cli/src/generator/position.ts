@@ -35,14 +35,14 @@ export const outputTextMap: Record<string, string> = {
     "flip": "Block9",
 };
 export const outputResultMap: Record<string, number> = {
-    "up": 0,
-    "down": 1,
-    "left": 2,
-    "right": 3,
+    "up": 1,
+    "down": 3,
+    "left": 7,
+    "right": 5,
     "forward": 4,
-    "back": 5,
-    "takeoff": 6,
-    "land": 7,
+    "back": 6,
+    "takeoff": 0,
+    "land": 2,
     "flip": 8,
 };
 export const overwriteBlockSize: Record<string, number> = {
