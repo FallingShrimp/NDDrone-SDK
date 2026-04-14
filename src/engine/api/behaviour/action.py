@@ -5,7 +5,7 @@ class DroneActionBase(BaseModel):
     command: str
     args: list[float]
 
-    def __init__(self, command: str, args: list[float]):
+    def __init__(self, command: str, args: list):
         super().__init__(command=command, args=args)
 
     def __str__(self) -> str:
@@ -57,3 +57,8 @@ class Land(DroneActionBase):
 class Translate(DroneActionBase):
     def __init__(self, x: float, y: float, z: float):
         super().__init__(command="go", args=[x, y, z])
+
+
+class Flip(DroneActionBase):
+    def __init__(self, direction: str):
+        super().__init__(command="flip", args=[direction])

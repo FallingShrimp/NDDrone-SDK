@@ -24,15 +24,15 @@ export const outputPosition: Record<string, [number, number]> = {
     "flip": center(0, 0)
 };
 export const outputTextMap: Record<string, string> = {
-    "up": "Block1",
-    "down": "Block2",
-    "left": "Block3",
-    "right": "Block4",
-    "forward": "Block5",
-    "back": "Block6",
-    "takeoff": "Block7",
-    "land": "Block8",
-    "flip": "Block9",
+    "up": "向上",
+    "down": "向下",
+    "left": "向左",
+    "right": "向右",
+    "forward": "向前",
+    "back": "向后",
+    "takeoff": "起飞",
+    "land": "降落",
+    "flip": "翻滚",
 };
 export const outputResultMap: Record<string, number> = {
     "up": 1,
