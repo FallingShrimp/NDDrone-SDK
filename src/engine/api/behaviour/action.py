@@ -3,15 +3,13 @@ from pydantic import BaseModel
 
 class DroneActionBase(BaseModel):
     command: str
-    args: list[float]
+    args: list
 
     def __init__(self, command: str, args: list):
         super().__init__(command=command, args=args)
 
     def __str__(self) -> str:
-        return (
-            f"{self.command} {' '.join([str(round(arg)) for arg in self.args])}".strip()
-        )
+        return f"{self.command} {' '.join([str(round(arg) if isinstance(arg, (int, float)) else arg) for arg in self.args])}".strip()
 
 
 class Forward(DroneActionBase):
