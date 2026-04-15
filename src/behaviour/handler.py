@@ -13,19 +13,6 @@ from engine.api.behaviour.handler import command
 
 STEP_DISTANCE = 50
 
-"""
-export const outputResultMap: Record<string, number> = {
-    "up": 1,
-    "down": 3,
-    "left": 7,
-    "right": 5,
-    "forward": 4,
-    "back": 6,
-    "takeoff": 0,
-    "land": 2,
-    "flip": 8,
-};"""
-
 
 @command(0)
 def zero():
