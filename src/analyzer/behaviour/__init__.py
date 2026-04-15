@@ -1,10 +1,10 @@
 import random
+from datetime import datetime
 
 from analyzer.behaviour.parser import ArgumentSlot, command
 from engine.util.network import checkConnection
 from instances.loggers import loggerNeuroApi
 from neuroApi import NeuroApiServer
-from datetime import datetime
 
 
 @command(type="command")
@@ -26,6 +26,7 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
         dt = datetime.fromtimestamp(timestamp / 1000)
         if epoch is not None:
             result = apiServer.analyzer.predict(epoch)[0]
+            loggerNeuroApi.info(f"Mind result: {result}")
             with open(
                 f"epoch/{dt.strftime('%Y-%m-%d_%H-%M-%S')}.txt",
                 "w",
