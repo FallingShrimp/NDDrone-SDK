@@ -1,0 +1,118 @@
+{
+    "inputKeys": [
+        "up",
+        "down",
+        "left",
+        "right",
+        "forward",
+        "back",
+        "takeoff",
+        "land",
+        "flip"
+    ],
+    "inputPosition": {
+        "up": [
+            630,
+            110
+        ],
+        "down": [
+            630,
+            750
+        ],
+        "left": [
+            950,
+            430
+        ],
+        "right": [
+            1590,
+            430
+        ],
+        "forward": [
+            1260,
+            110
+        ],
+        "back": [
+            1260,
+            750
+        ],
+        "takeoff": [
+            30,
+            110
+        ],
+        "land": [
+            30,
+            750
+        ],
+        "flip": [
+            330,
+            430
+        ]
+    },
+    "outputPosition": {
+        "up": [
+            0,
+            0
+        ],
+        "down": [
+            1620,
+            0
+        ],
+        "left": [
+            0,
+            780
+        ],
+        "right": [
+            1620,
+            780
+        ],
+        "forward": [
+            0,
+            390
+        ],
+        "back": [
+            1620,
+            390
+        ],
+        "takeoff": [
+            810,
+            0
+        ],
+        "land": [
+            810,
+            780
+        ],
+        "flip": [
+            810,
+            390
+        ]
+    },
+    "outputResultMap": {
+        "up": 1,
+        "down": 3,
+        "left": 7,
+        "right": 5,
+        "forward": 4,
+        "back": 6,
+        "takeoff": 0,
+        "land": 2,
+        "flip": 8
+    },
+    "outputTextMap": {
+        "up": "向上",
+        "down": "向下",
+        "left": "向左",
+        "right": "向右",
+        "forward": "向前",
+        "back": "向后",
+        "takeoff": "起飞",
+        "land": "降落",
+        "flip": "翻滚"
+    },
+    "overwriteBlockSize": {},
+    "blockSize": 300,
+    "imageSize": [
+        1920,
+        1080
+    ],
+    "subtitleSize": 100
+}
