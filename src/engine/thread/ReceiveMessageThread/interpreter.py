@@ -20,5 +20,10 @@ def REACT_RESULT(
         loggerBehaviour.warning(f"风暴{result}未注册处理程序。")
 
 
+@command(type="receiveMessage")
+def PONG(thread: ReceiveMessageThread, **kw):
+    thread.pong = True
+
+
 def init():
     pass

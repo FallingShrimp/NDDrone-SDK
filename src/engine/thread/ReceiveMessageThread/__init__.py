@@ -10,24 +10,20 @@ from instances.loggers import loggerBehaviour
 
 
 def run(
-    rawCommand: str, thread: "ReceiveMessageThread", simulationWindow: SimulationWindow
+    rawCommand: str,
+    thread: "ReceiveMessageThread",
+    simulationWindow: SimulationWindow | None,
 ) -> bytes | str | None:
     _main, args, base = parseCommand(rawCommand, "receiveMessage")
     return base.handler(**(args | {"thread": thread, "simulation": simulationWindow}))
 
 
 class ReceiveMessageThread(threading.Thread):
-    neuroApiSocket: socket.socket
-    drone: SendMessageThread
-    step: int
-    isRunning: bool
-
     def __init__(
         self,
         neuroApiSocket: socket.socket,
         drone: SendMessageThread,
         step: int,
-        simulationWindow: SimulationWindow,
     ):
         super().__init__()
         self.neuroApiSocket = neuroApiSocket
@@ -35,7 +31,8 @@ class ReceiveMessageThread(threading.Thread):
         self.step = step
         self.isRunning = True
         self.stopEvent = threading.Event()
-        self.simulationWindow = simulationWindow
+        self.simulationWindow: SimulationWindow | None = None
+        self.pong = False
 
     def run(self) -> None:
         while not self.stopEvent.is_set():

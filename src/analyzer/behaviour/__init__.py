@@ -9,6 +9,13 @@ from neuroApi import NeuroApiServer
 
 
 @command(type="command")
+def PING(**KW):
+    from engine.thread.ReceiveMessageThread.interpreter import PONG
+
+    return PONG()
+
+
+@command(type="command")
 def QUIT_SERVER(apiServer: NeuroApiServer):
     apiServer.running = False
     apiServer.quit()

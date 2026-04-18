@@ -6,7 +6,7 @@ import keyboard
 import pyglet.gl.lib
 from psychopy import event, logging
 
-from analyzer.behaviour import QUIT_SERVER, PREDICT_MIND
+from analyzer.behaviour import PING, QUIT_SERVER, PREDICT_MIND
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection, createClient
@@ -23,10 +23,7 @@ warnings.filterwarnings("ignore")
 class NDDroneFlymode:
     def __init__(self):
         if config.metadata is None:
-            raise Exception("未找到积木元数据！请先编译刺激块。")
-        # 初始化刺激块窗口
-        self.simulation = SimulationWindow(config.windowSize)
-        keyboard.add_hotkey("m", self.toggleSimulation)
+            raise Exception("未找到刺激块元数据！请先编译刺激块。")
         # 配置一些路径常量
         self.picturePath = fromAssets("frames")
         self.backgroundPath = fromAssets("background.jpg")
@@ -43,7 +40,6 @@ class NDDroneFlymode:
             self.neuroApiSocket,
             self.drone,
             50,
-            self.simulation,
         )
 
     def toggleSimulation(self):
@@ -76,25 +72,33 @@ class NDDroneFlymode:
         self.running = False
 
     def init(self):
-        # self.simulation.winHandle.minimize()
         loggerMain.info("NDDrone-flymode 正在初始化...")
         loggerMain.info("正在启动无人机...")
         self.drone.start()
         self.drone.send("command")
         time.sleep(1)
         self.drone.send("motoron")
+
+    def mainloop(self):
+        loggerMain.info("正在首次握手NeuroAPI...")
+        self.messageReceiveThread.start()
+        self.neuroApiSocket.send(PING())
+        while not self.messageReceiveThread.pong:
+            pass
+        loggerMain.info("NeuroAPI首次握手完成。")
+        loggerMain.info("正在初始化刺激块窗口...")
+        self.simulation = SimulationWindow(config.windowSize)
+        keyboard.add_hotkey("m", self.toggleSimulation)
         loggerMain.info("正在加载逐帧图...")
         try:
             self.simulation.loadFlickerFrames(self.picturePath)
             self.simulation.loadDynamicFrames(self.backgroundPath, self.promptPath)
         except OSError:
-            loggerMain.error("未找到帧文件！请先编译刺激块。")
+            loggerMain.error("未找到闪烁帧资源！请先编译刺激块。")
             self.quit()
-        loggerMain.info("闪烁窗口已就绪！")
-
-    def mainloop(self):
+        self.messageReceiveThread.simulationWindow = self.simulation
+        loggerMain.info("闪烁窗口已就绪。")
         self.running = True
-        self.messageReceiveThread.start()
         # 第一帧，先把提示帧展示出来，等按空格开始
         self.simulation.prompt()
         while self.running:

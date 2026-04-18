@@ -6,6 +6,7 @@ from typing import Callable
 
 from psychopy import core
 
+from engine.util.network import checkConnection
 from instances.loggers import loggerDrone
 
 
@@ -41,11 +42,14 @@ class SendMessageThread(Thread):
         loggerDrone.warning("已断开连接。")
 
     def send(self, message: str):
-        try:
-            loggerDrone.info("发送消息: " + message)
-            self._sock.sendto(message.encode(encoding="utf-8"), self._roboAddress)
-        except Exception as e:
-            loggerDrone.error("发送失败: " + str(e))
+        if checkConnection(self._sock):
+            try:
+                loggerDrone.info("发送消息: " + message)
+                self._sock.sendto(message.encode(encoding="utf-8"), self._roboAddress)
+            except Exception as e:
+                loggerDrone.error("发送失败: " + str(e))
+        else:
+            loggerDrone.warning("未连接无人机，已跳过发送消息：" + message)
 
     def close(self):
         self._is_running = False
