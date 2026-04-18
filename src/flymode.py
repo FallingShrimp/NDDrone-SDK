@@ -6,7 +6,7 @@ import keyboard
 import pyglet.gl.lib
 from psychopy import event, logging
 
-from analyzer.behaviour import STOP, TIME
+from analyzer.behaviour import QUIT_SERVER, PREDICT_MIND
 from engine.thread.ReceiveMessageThread import ReceiveMessageThread
 from engine.thread.SendMessageThread import SendMessageThread
 from engine.util.network import checkConnection, createClient
@@ -64,7 +64,7 @@ class NDDroneFlymode:
         self.simulation.close()  # 关掉窗口
         self.messageReceiveThread.close()  # 先把接收线程关了，不然后面发STOP会报错
         if checkConnection(self.neuroApiSocket):
-            self.neuroApiSocket.send(STOP())  # 关掉NeuroAPI
+            self.neuroApiSocket.send(QUIT_SERVER())  # 关掉NeuroAPI
             self.neuroApiSocket.close()
         self.drone.send("land")  # 降落无人机防止耗电
         self.drone.close()
@@ -110,7 +110,7 @@ class NDDroneFlymode:
                     if checkConnection(self.neuroApiSocket):
                         # 给NeuroAPI发消息准备开始接收识别结果
                         currentTime = int(time.time() * 1000)
-                        self.neuroApiSocket.send(TIME(currentTime))
+                        self.neuroApiSocket.send(PREDICT_MIND(currentTime))
                     # 开始闪烁
                     self.simulation.simulate()
                 time.sleep(0.01)

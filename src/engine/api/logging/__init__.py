@@ -63,8 +63,8 @@ class Logger:
         with open(to, "w", encoding="utf8") as f:
             json.dump(self.toRaw(), f, ensure_ascii=False, indent=4)
 
-    def log(self, type: MessageType, message: str):
-        record = LogRecord(type, message, self.modulePath())
+    def log(self, type: MessageType, *messages: str):
+        record = LogRecord(type, " ".join(messages), self.modulePath())
         self.records.append(record)
         if self.parent:
             self.parent.records.append(record)
@@ -76,8 +76,8 @@ class Logger:
     def warning(self, message: str):
         self.log(MessageType.WARNING, message)
 
-    def error(self, message: str | Exception):
-        self.log(MessageType.ERROR, str(message))
+    def error(self, *messages: str | Exception):
+        self.log(MessageType.ERROR, *[str(x) for x in messages])
 
 
 loggerMain = Logger("main")

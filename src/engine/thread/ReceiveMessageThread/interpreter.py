@@ -6,7 +6,11 @@ from instances.loggers import loggerBehaviour
 
 
 @command(ArgumentSlot("result", int), type="receiveMessage")
-def RSLT(result: int, thread: ReceiveMessageThread, simulation: SimulationWindow):
+def REACT_RESULT(
+    result: int,
+    thread: ReceiveMessageThread,
+    simulation: SimulationWindow,
+):
     loggerBehaviour.info(f"执行指令：{result}")
     simulation.focus = result
     if result in store:

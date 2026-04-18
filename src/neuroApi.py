@@ -23,25 +23,24 @@ class AnalyzerServer(threading.Thread):
 
     def run(self):
         while self.apiServer.running:
-            # try:
-            if (
-                hasattr(self.apiServer, "clientSocket")
-                and checkConnection(self.apiServer.clientSocket)
-                and self.apiServer.messageQueue.qsize() > 0
-            ):
-                message = self.apiServer.messageQueue.get()
-                loggerNeuroApi.info(f"处理消息: [bold]{message}[/bold]")
-                result = self.parseCommand(message)
-                if result:
-                    if isinstance(result, bytes):
-                        result = result.decode("utf8")
-                    loggerNeuroApi.info(f"发送消息: [bold]{result}[/bold]")
-                    if isinstance(result, str):
-                        self.apiServer.clientSocket.send(result.encode("utf8"))
+            try:
+                if (
+                    hasattr(self.apiServer, "clientSocket")
+                    and checkConnection(self.apiServer.clientSocket)
+                    and self.apiServer.messageQueue.qsize() > 0
+                ):
+                    message = self.apiServer.messageQueue.get()
+                    loggerNeuroApi.info(f"处理消息: [bold]{message}[/bold]")
+                    result = self.parseCommand(message)
+                    if result:
+                        if isinstance(result, bytes):
+                            result = result.decode("utf8")
+                        loggerNeuroApi.info(f"发送消息: [bold]{result}[/bold]")
+                        if isinstance(result, str):
+                            self.apiServer.clientSocket.send(result.encode("utf8"))
+            except Exception as e:
+                loggerNeuroApi.error("Error while processing NeuroApiCommand:", e)
             time.sleep(0.01)
-        # except Exception as e:
-        #     loggerNeuroApi.error(e)
-        #     time.sleep(0.01)
 
 
 class NeuroApiServer(threading.Thread):

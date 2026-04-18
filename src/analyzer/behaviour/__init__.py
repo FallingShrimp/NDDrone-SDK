@@ -2,20 +2,21 @@ import random
 from datetime import datetime
 
 from analyzer.behaviour.parser import ArgumentSlot, command
+from engine.api.timer.constants import TIME_FORMAT
 from engine.util.network import checkConnection
 from instances.loggers import loggerNeuroApi
 from neuroApi import NeuroApiServer
 
 
 @command(type="command")
-def STOP(apiServer: NeuroApiServer):
+def QUIT_SERVER(apiServer: NeuroApiServer):
     apiServer.running = False
     apiServer.quit()
 
 
 @command(ArgumentSlot("timestamp", int), type="command")
-def TIME(timestamp: int, apiServer: NeuroApiServer):
-    from engine.thread.ReceiveMessageThread.interpreter import RSLT
+def PREDICT_MIND(timestamp: int, apiServer: NeuroApiServer):
+    from engine.thread.ReceiveMessageThread.interpreter import REACT_RESULT
 
     result = -1
     if checkConnection(apiServer.deviceThread.sock):
@@ -28,7 +29,7 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
             result = apiServer.analyzer.predict(epoch)[0]
             loggerNeuroApi.info(f"Mind result: {result}")
             with open(
-                f"epoch/{dt.strftime('%Y-%m-%d_%H-%M-%S')}.txt",
+                f"epoch/{dt.strftime(TIME_FORMAT)}.txt",
                 "w",
                 encoding="utf8",
             ) as output:
@@ -38,9 +39,9 @@ def TIME(timestamp: int, apiServer: NeuroApiServer):
                         ",".join([str(x) for x in epoch[index, :].tolist()]) + "\n"
                     )
     else:
-        loggerNeuroApi.warning("未连接ND8，采用随机数。")
+        loggerNeuroApi.warning("未连接ND8。")
         result = random.randint(0, 8)
-    return RSLT(result)
+    return REACT_RESULT(result)
 
 
 def init():
