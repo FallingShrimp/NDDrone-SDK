@@ -11,13 +11,13 @@ def REACT_RESULT(
     thread: ReceiveMessageThread,
     simulation: SimulationWindow,
 ):
-    loggerBehaviour.info(f"执行指令：{result}")
+    loggerBehaviour.info(f"头脑风暴：{result}")
     simulation.focus = result
     if result in store:
         action = store[result]()
         thread.drone.send(str(action))
     else:
-        loggerBehaviour.warning(f"指令{result}未注册处理程序。")
+        loggerBehaviour.warning(f"风暴{result}未注册处理程序。")
 
 
 def init():
