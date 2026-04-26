@@ -61,6 +61,7 @@ class NeuroApiServer(threading.Thread):
         )
         self.running = True
         self.analyzerThread = AnalyzerServer(parseCommand, self)
+        self.predictedTimes = 0
 
     def run(self):
         self.analyzerThread.start()

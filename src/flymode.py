@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 import warnings
 
@@ -78,6 +79,9 @@ class NDDroneFlymode:
         self.drone.send("command")
         time.sleep(1)
         self.drone.send("motoron")
+        loggerMain.info("正在初始化epoches")
+        shutil.rmtree("epoch")
+        os.makedirs("epoch", exist_ok=True)
 
     def mainloop(self):
         loggerMain.info("正在首次握手NeuroAPI...")

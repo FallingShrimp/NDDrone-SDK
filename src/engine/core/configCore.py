@@ -50,6 +50,7 @@ class Config:
         cf.read("config.ini")
         self.frameCount = cf.getint("frames", "count")
         self.logfile = cf.get("run", "logfile")
+        self.watcher = cf.get("experiment", "watcher")
 
     def metadataINFO(self):
         try:
