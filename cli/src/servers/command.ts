@@ -7,6 +7,7 @@ export class CommandServer extends BaseDroneServer {
         super("udp4", DRONE_ADDRESS, SEND_COMMAND_SERVER_ADDRESS2);
     }
     receive(message: string): void {
-        writeFile("1.txt", message);
+        writeFile("output.txt", message);
+        process.stdout.write(`\n${message}\n> `);
     }
 }
