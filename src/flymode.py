@@ -35,7 +35,7 @@ class NDDroneFlymode:
         self.neuroApiSocket = createClient(config.neuroApiAddress, 1)
         self.neuroApiSocket.settimeout(20000)
         # 无人机发送指令
-        self.drone = SendMessageThread(("192.168.10.1", 8889))
+        self.drone = SendMessageThread(config.droneIp)
         # 无人机接收指令
         self.messageReceiveThread = ReceiveMessageThread(
             self.neuroApiSocket,

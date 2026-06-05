@@ -51,6 +51,10 @@ class Config:
         self.frameCount = cf.getint("frames", "count")
         self.logfile = cf.get("run", "logfile")
         self.watcher = cf.get("experiment", "watcher")
+        self.droneIp = (
+            cf.get("device", "drone-host"),
+            cf.getint("device", "drone-port"),
+        )
 
     def metadataINFO(self):
         try:
